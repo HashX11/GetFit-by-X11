@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="X11 SHRED">
+<meta name="theme-color" content="#000">
+<link rel="apple-touch-icon" href="icon.png">
+<title>X11 — Hashem's Shred Program</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--p:#00FF87;--bg:#070f0b;--c:#0d1f16}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',system-ui,sans-serif;background:#000;color:#fff;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.app{max-width:430px;margin:0 auto;min-height:100dvh;position:relative;padding-bottom:76px}
+.hdr{padding:max(env(safe-area-inset-top),14px) 16px 12px;background:linear-gradient(180deg,var(--bg),#000);border-bottom:1px solid rgba(0,255,135,.1)}
+.htop{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.hn{font-size:13px;color:#555}.hn b{color:var(--p)}
+.ft{display:flex;align-items:center;gap:6px;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.2);padding:4px 10px;border-radius:20px;font-size:11px;color:#FFD700;cursor:pointer;font-weight:600}
+.ft.on{background:rgba(255,215,0,.2);border-color:#FFD700}
+.pt{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:1.5px}
+.wti{font-size:24px;font-weight:800;letter-spacing:-.5px;margin-top:4px}.wti span{color:#333;font-weight:400;font-size:15px}
+.ws{font-size:12px;color:#666;margin-top:3px}
+.pb{width:100%;height:4px;background:#151515;border-radius:2px;margin-top:8px;overflow:hidden}
+.pf{height:100%;border-radius:2px;transition:width .5s}
+.wn{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:#050505}
+.wb{padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid;transition:.1s}
+.wb:active:not(:disabled){transform:scale(.95)}.wb:disabled{opacity:.3}
+.ds{display:flex;gap:3px;padding:6px 10px;overflow-x:auto;background:#030303;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.ds::-webkit-scrollbar{display:none}
+.db{flex:0 0 auto;padding:7px 10px;border-radius:10px;border:none;background:#0a0a0a;color:#555;font-size:10px;font-weight:500;cursor:pointer;text-align:center;min-width:46px;transition:.2s}
+.db.a{font-weight:800}.db .i{display:block;font-size:13px;margin-bottom:1px}
+.cnt{padding:12px 16px;min-height:50vh}
+.dh{margin-bottom:14px}.dh h2{font-size:19px;font-weight:800}.dh p{font-size:12px;color:#555;margin-top:2px}
+.ec{background:#0a0a0a;border:1px solid #151515;border-radius:13px;padding:13px;margin-bottom:9px;cursor:pointer;transition:.15s}
+.ec.op{border-color:rgba(0,255,135,.2)}
+.etp{display:flex;justify-content:space-between;align-items:flex-start}
+.en{font-size:14px;font-weight:700;line-height:1.3}
+.ssb{display:inline-block;background:#FFD700;color:#000;padding:1px 7px;border-radius:4px;font-size:9px;font-weight:800;margin-left:6px;vertical-align:middle}
+.em{font-size:10px;color:#444;margin-top:2px}
+.ea{color:#333;font-size:16px;transition:.2s;flex-shrink:0;margin-left:8px}
+.ec.op .ea{transform:rotate(180deg)}
+.et{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap}
+.tg{padding:3px 9px;border-radius:5px;font-size:11px;font-weight:600}
+.tp{background:rgba(0,255,135,.08);color:var(--p)}.ty{background:rgba(255,215,0,.08);color:#FFD700}
+.tb2{background:rgba(0,153,255,.08);color:#09F}.tg2{background:rgba(0,255,135,.12);color:#0F8}
+.to{background:rgba(255,107,53,.12);color:#FF6B35}.tr2{background:rgba(255,71,87,.1);color:#FF4757}
+.ed{margin-top:9px;display:none}.ec.op .ed{display:block}
+.eno{font-size:11px;color:#888;font-style:italic;margin-bottom:6px}
+.vd{display:inline-flex;align-items:center;gap:5px;background:#CC0000;color:#fff;padding:7px 13px;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none}
+.vd:active{transform:scale(.95)}
+.st{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin:18px 0 8px}
+.ac{background:#0a0a0a;border:1px solid #151515;border-radius:13px;padding:13px;margin-bottom:7px;font-size:13px;line-height:1.5}
+.fn{border-radius:13px;padding:13px;margin-top:14px}
+.nb{border-left:3px solid;padding:10px 12px;border-radius:0 10px 10px 0;font-size:12px;color:#aaa;margin-top:12px;line-height:1.5}
+.mg{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px}
+.mb{background:#0a0a0a;border-radius:12px;padding:10px 6px;text-align:center;border:1px solid #151515}
+.mv{font-size:17px;font-weight:800}.ml{font-size:9px;color:#555;margin-top:3px}
+.mc{background:#0a0a0a;border:1px solid #151515;border-radius:13px;padding:13px;margin-bottom:9px}
+.mo{border:1px solid #151515;border-radius:9px;padding:9px;margin-bottom:5px}
+.mo:first-child{border-color:rgba(0,255,135,.1)}
+.mm{display:flex;gap:5px;margin-top:5px;flex-wrap:wrap}
+.mp{font-size:10px;font-weight:600;padding:2px 6px;border-radius:3px}
+.rc{background:linear-gradient(135deg,rgba(0,153,255,.06),rgba(0,153,255,.02));border:1px solid rgba(0,153,255,.15);border-radius:13px;padding:14px;margin-bottom:9px}
+.rs{display:flex;gap:10px;margin-top:10px}
+.rs div{flex:1;background:rgba(0,153,255,.06);border-radius:8px;padding:8px;text-align:center}
+.ms{display:flex;align-items:stretch;gap:0;margin-bottom:4px}
+.msl{width:3px;background:#151515;margin:0 12px;position:relative;flex-shrink:0}
+.msl::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:11px;height:11px;border-radius:50%;border:2px solid #333;background:#000}
+.ms.d .msl{background:var(--p)}.ms.d .msl::before{background:var(--p);border-color:var(--p)}
+.ms.c .msl::before{border-color:var(--p);box-shadow:0 0 8px rgba(0,255,135,.5)}
+.msc{flex:1;background:#0a0a0a;border:1px solid #151515;border-radius:10px;padding:10px 12px;margin:3px 0}
+.ms.c .msc{border-color:rgba(0,255,135,.3)}
+.lr{display:flex;gap:8px;margin-bottom:8px}
+.li{flex:1;padding:10px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:10px;color:#fff;font-size:14px;font-family:inherit;outline:none;-webkit-appearance:none}
+.li:focus{border-color:var(--p)}
+.sc{background:#0a0a0a;border:1px solid #151515;border-radius:13px;padding:13px;margin-bottom:7px}
+.sct{display:flex;justify-content:space-between;align-items:center}
+.tr{display:flex;gap:10px;align-items:center;background:#0a0a0a;border:1px solid #151515;border-radius:13px;padding:11px;margin-bottom:7px}
+.ig{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.ic{background:#0a0a0a;border-radius:13px;padding:14px;text-align:center;border:1px solid #151515}
+.iv{font-size:26px;font-weight:800}.iv span{font-size:13px}
+.il{font-size:10px;color:#555;margin-top:3px}
+.fb{display:inline-flex;align-items:center;gap:4px;background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.2);padding:3px 10px;border-radius:8px;font-size:11px;color:#FFD700;font-weight:700;margin-bottom:12px}
+.tbr{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;display:flex;background:#050505ee;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid #111;z-index:100;padding-bottom:env(safe-area-inset-bottom);overflow-x:auto;scrollbar-width:none}
+.tbr::-webkit-scrollbar{display:none}
+.t{flex:0 0 auto;min-width:56px;padding:9px 6px 7px;background:transparent;border:none;border-top:2px solid transparent;color:#333;font-size:9px;font-weight:500;text-align:center;cursor:pointer;transition:.2s}
+.t.a{font-weight:700;border-top-color:currentColor}
+.t .i{display:block;font-size:16px;margin-bottom:1px}
+.rb{background:none;border:1px solid #222;color:#555;padding:10px;border-radius:10px;font-size:12px;cursor:pointer;margin-top:16px;width:100%;text-align:center}
+/* SHOP */
+.shop-cat{font-size:13px;font-weight:700;margin:14px 0 6px;display:flex;align-items:center;gap:6px}
+.shop-item{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#0a0a0a;border:1px solid #151515;border-radius:10px;margin-bottom:5px;font-size:13px}
+.shop-qty{color:#666;font-size:12px;white-space:nowrap}
+.avoid-item{padding:10px 12px;background:rgba(255,71,87,.04);border:1px solid rgba(255,71,87,.12);border-radius:10px;margin-bottom:5px}
+.avoid-item .nm{font-size:13px;font-weight:600;color:#FF4757}
+.avoid-item .why{font-size:11px;color:#888;margin-top:2px}
+/* CHEAT */
+.cheat{background:linear-gradient(135deg,rgba(255,215,0,.06),rgba(255,215,0,.02));border:1px solid rgba(255,215,0,.15);border-radius:13px;padding:12px;margin-bottom:6px}
+.cheat .wk{font-size:11px;font-weight:700;color:#FFD700}
+.cheat .rw{font-size:14px;font-weight:700;margin-top:2px}
+.cheat .rl{font-size:12px;color:#888;margin-top:3px;line-height:1.4}
+/* MAINT */
+.maint-card{background:linear-gradient(135deg,rgba(0,255,135,.04),rgba(0,255,135,.01));border:1px solid rgba(0,255,135,.15);border-radius:13px;padding:14px;margin-bottom:9px}
+.maint-card h4{font-size:15px;font-weight:800;margin-bottom:4px}
+.maint-card p{font-size:12px;color:#999;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<script>
+const ME={name:"Hashem",w:76,bf:22,phases:[{n:"FOUNDATION",wk:8,cal:2200,p:170,c:230,f:65,l:"Moderate Cut"},{n:"SHRED",wk:8,cal:2000,p:180,c:190,f:58,l:"Aggressive Cut"},{n:"PEAK",wk:8,cal:1850,p:185,c:160,f:52,l:"Peak Shred"}]};
+
+const MST=[
+{wk:2,w:75.2,bf:21.5,nt:"Initial water weight drop",ch:0},
+{wk:4,w:74.4,bf:20.5,nt:"Clothes fitting differently",ch:1,cr:"Burger & fries or loaded shawarma plate"},
+{wk:6,w:73.5,bf:19.5,nt:"Face & arms visibly changing",ch:0},
+{wk:8,w:72.5,bf:18.5,nt:"Phase 1 complete",ch:1,cr:"Full restaurant dinner — steak, sides, dessert"},
+{wk:10,w:71.7,bf:17.5,nt:"Shoulder caps showing",ch:0},
+{wk:12,w:70.8,bf:16.5,nt:"HALFWAY — abs outline visible",ch:1,cr:"Go all out: pizza, sushi, whatever you crave"},
+{wk:14,w:70,bf:15.5,nt:"Arm definition sharp",ch:0},
+{wk:16,w:69.2,bf:14.5,nt:"Phase 2 complete — 6-pack emerging",ch:1,cr:"Celebration dinner + this is also a refeed"},
+{wk:18,w:68.5,bf:13,nt:"Striations visible",ch:0},
+{wk:20,w:68,bf:12,nt:"Full 6-pack, veins popping",ch:1,cr:"One good meal — last one before final push"},
+{wk:22,w:67.5,bf:11,nt:"Razor-sharp definition",ch:0},
+{wk:24,w:67,bf:10,nt:"FINAL FORM — shredded.",ch:1,cr:"Best meal of your life. You earned every bite."}];
+
+const RN=[{wk:[1,2],t:"Base Building",p:"3x: 3km easy, 1x 4km steady",tg:"3-4km",nt:"Focus on form, not speed"},{wk:[3,4],t:"Extend",p:"3x: 4km easy, 1x 5km w/ fast finish",tg:"5km/32min",nt:"Keep breathing conversational"},{wk:[5,6],t:"5K Comfort",p:"3x: 5km easy, 1x 3km tempo",tg:"5km/30min",nt:"Add 1 tempo run/week"},{wk:[7,8],t:"5K Speed",p:"2x 5km, 1x tempo, 1x 6x400m intervals",tg:"5km/<28min",nt:"400m hard, 200m walk, repeat"},{wk:[9,10],t:"Build 6K",p:"2x 5km, 1x 6km steady, 1x intervals",tg:"6km",nt:"Long run on gym rest day"},{wk:[11,12],t:"Build 7K",p:"2x 5km, 1x 7km long, 1x 4km tempo",tg:"7km/44min",nt:"Slow long runs — distance > speed"},{wk:[13,14],t:"Build 8K",p:"2x 5km, 1x 8km, 1x hill sprints",tg:"8km",nt:"Hills = power + VO2max"},{wk:[15,16],t:"8K Strong",p:"1x 5km tempo, 1x 8km, 1x intervals",tg:"8km/48min",nt:"Legs should feel powerful"},{wk:[17,18],t:"First 9K",p:"1x 5km, 1x 9km, 1x 5km tempo",tg:"9km",nt:"Hydrate during long runs"},{wk:[19,20],t:"First 10K",p:"1x 5km, 1x 10km slow, 1x 6km tempo",tg:"10km",nt:"Just finish — time doesn't matter yet"},{wk:[21,22],t:"10K Speed",p:"1x 10km, 1x 7km tempo, 1x intervals",tg:"10km/58min",nt:"You're a runner now"},{wk:[23,24],t:"Race Ready",p:"1x 10km race pace, 1x 5km easy, taper",tg:"10km/<55min",nt:"Everything on the road"}];
+function getRn(wk){return RN.find(r=>wk>=r.wk[0]&&wk<=r.wk[1])||RN[0]}
+
+// SHOPPING LIST
+const SHOP={
+"🥩 Proteins (fresh 2x/week)":[
+["Chicken breast","1.5-2kg"],["Chicken thighs","500g"],["Lean beef mince","500g"],["Steak cuts","400g"],["White fish (tilapia/sea bass)","400g"],["Salmon fillets","400g"],["Shrimp","300g"],["Canned tuna (water)","6 cans"],["Smoked turkey slices","200g"],["Eggs","30"],["Beef jerky","2 packs"]],
+"🥛 Dairy":[
+["Greek yogurt 0%","1.5kg"],["Cottage cheese","500g"],["Feta cheese","200g"],["Almond milk (unsweetened)","1L"],["Laban","500ml (fasting)"]],
+"🍚 Carbs (biweekly)":[
+["Basmati rice","2kg"],["Jasmine rice","1kg"],["Brown rice","1kg"],["Quinoa","500g"],["Couscous","500g"],["Oats","1kg"],["Whole wheat pasta","500g"],["Whole wheat bread","1 loaf"],["Rice cakes","3 packs"],["Granola (low sugar)","500g"]],
+"🥦 Vegetables (weekly)":[
+["Broccoli","2 heads"],["Zucchini","4"],["Green beans","300g"],["Spinach","2 bags"],["Bell peppers","4-5"],["Onions","1kg"],["Garlic","2 heads"],["Tomatoes","6-8"],["Cucumber","4"],["Carrots","500g"],["Celery","1 bunch"],["Bok choy","2"],["Mixed salad","2 bags"],["Avocado","3"]],
+"🍌 Fruits":[
+["Bananas","8"],["Apples","5"],["Frozen berries","500g bag"],["Dates","200g pack"],["Lemons","4"]],
+"🫒 Fats & Pantry":[
+["Extra virgin olive oil","500ml"],["Peanut butter / almond butter","400g"],["Almonds","200g"],["Walnuts","100g"],["Chia seeds","150g"],["Honey","250g"],["Cinnamon","1 jar"],["Soy sauce","250ml"],["Hummus / tahini","300g"],["Canned tomatoes","3 cans"],["Stock cubes","1 box"]],
+"☕ Drinks":[
+["Green tea bags","box of 20"],["Chamomile tea","box"],["Sparkling water","6-pack"],["Lemon for water","(see fruits)"]],
+"💊 Supplements (monthly)":[
+["Whey isolate","2.2kg tub"],["Casein protein","1kg tub"],["Creatine monohydrate","500g"],["Multivitamin","60 tabs"],["Fish oil capsules","90 caps"],["Vitamin D3 4000IU","90 caps"],["Magnesium glycinate","60 caps"],["Electrolyte powder","30 servings"],["Pre-workout (caffeine)","30 servings"]]
+};
+
+// AVOID LIST
+const AVOID=[
+{n:"Fruit juices, sodas, energy drinks",w:"Liquid calories — 200-400 empty cal per serving"},
+{n:"Sugary coffee drinks (frappe, mocha, latte)",w:"A single frappe can be 500+ cal of sugar and cream"},
+{n:"Deep fried food (fries, samosas, fried chicken)",w:"Hidden oil adds 300+ cal, causes inflammation"},
+{n:"Sweets, pastries, kunafa, baklava, cake",w:"Insulin spike → energy crash → stored as fat during a cut"},
+{n:"Processed meats (hot dogs, cheap sausages)",w:"Low protein quality, high sodium, bad fats"},
+{n:"Alcohol — all types",w:"Kills protein synthesis for 72h, empty calories, ruins sleep"},
+{n:"Flavored yogurts & granola bars",w:"Marketed as healthy but loaded with sugar"},
+{n:"Smoothie bowls & acai bowls from cafes",w:"Can hit 600-800 cal with all the toppings"},
+{n:"Restaurant sauces (mayo, cheese, cream)",w:"Hidden 300-500 cal per serving"},
+{n:"White bread, croissants, pastries",w:"Empty carbs, no fiber, spike blood sugar"},
+{n:"Dried fruit in large amounts",w:"Concentrated sugar — easy to eat 400 cal without realizing"},
+{n:"Margarine, vegetable oils for cooking",w:"Use olive oil only — inflammatory seed oils slow recovery"}];
+
+// MAINTENANCE PLAN
+const MAINT={
+cal:2400,p:160,c:260,f:70,
+training:"4 days/week (Push, Pull, Legs, Upper — drop the 5th day)",
+cardio:"Run 3x/week (maintain 10km ability), walk daily",
+rules:["Calories at maintenance (~2400) — no deficit","Protein stays high (2g/kg = 160g)","Keep training but reduce volume 20%","Run for enjoyment, not obligation","One full rest day, one active recovery","Weigh weekly — if weight rises >2kg, mini-cut 2 weeks","Cheat meals: 1-2 per week is fine at maintenance","Sleep and water stay non-negotiable","Keep taking creatine, multi, fish oil, D3, magnesium","Re-assess body composition every 3 months"]
+};
+
+let S={week:1,tab:'workout',day:0,exp:null,fasting:false};
+let LOG=[];
+try{Object.assign(S,JSON.parse(localStorage.getItem('x11s')||'{}'))}catch(e){}
+try{LOG=JSON.parse(localStorage.getItem('x11l')||'[]')}catch(e){}
+function save(){try{localStorage.setItem('x11s',JSON.stringify({week:S.week,fasting:S.fasting}));localStorage.setItem('x11l',JSON.stringify(LOG))}catch(e){}}
+
+function rng(s){return()=>{s=(s*16807)%2147483647;return(s-1)/2147483646}}
+function shuf(a,r){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function pk(a,n,r){return shuf(a,r).slice(0,n)}
+function gph(w){return w<=8?1:w<=16?2:3}
+function gpw(w){return w<=8?w:w<=16?w-8:w-16}
+const PC={1:{p:"#00FF87",bg:"#070f0b",c:"#0d1f16"},2:{p:"#FF6B35",bg:"#140b07",c:"#1f1510"},3:{p:"#FF2D55",bg:"#14070c",c:"#1f0d15"}};
+const DAYS=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+
+const X={
+cc:[{n:"Flat Bench Press",y:"rT7DgCr-3pg",m:"Chest, Tri"},{n:"Incline DB Press",y:"8iPEnn-ltC8",m:"Upper Chest"},{n:"Incline Barbell",y:"SrqOu55lrYU",m:"Upper Chest"},{n:"Decline Bench",y:"LfyQBUKR8SE",m:"Lower Chest"},{n:"DB Flat Press",y:"VmB1G1K7v94",m:"Chest"},{n:"Machine Press",y:"NwzUje3z0qY",m:"Chest"}],
+ci:[{n:"Cable Flyes",y:"Iwe6AmxVf7o",m:"Chest"},{n:"Low-High Fly",y:"Snvta3MbNBc",m:"Upper Chest"},{n:"High-Low Fly",y:"Iwe6AmxVf7o",m:"Lower Chest"},{n:"Pec Deck",y:"Z57CtFmRMxA",m:"Chest"},{n:"DB Flyes",y:"eozdVDA78K0",m:"Chest"}],
+sp:[{n:"Seated DB OHP",y:"qEwKCR5JCog",m:"Delts"},{n:"Barbell OHP",y:"2yjwXTZQDDI",m:"Delts"},{n:"Arnold Press",y:"6Z15_WdXmVw",m:"Delts"},{n:"Machine Press",y:"Wqq43dKoG2s",m:"Delts"}],
+sl:[{n:"DB Lateral Raise",y:"3VcKaXpzqRo",m:"Side Delts"},{n:"Cable Laterals",y:"PPrzBWZDOhA",m:"Side Delts"},{n:"Machine Laterals",y:"dpAAhb_MBOc",m:"Side Delts"},{n:"Leaning Laterals",y:"H6IBKpBNyKI",m:"Side Delts"}],
+sr:[{n:"Face Pulls",y:"rep-qVOkqgk",m:"Rear Delts"},{n:"Reverse Pec Deck",y:"5YK4bgzXDp0",m:"Rear Delts"},{n:"Bent Rear Fly",y:"EA7u4Q_8HQ0",m:"Rear Delts"}],
+tr:[{n:"Rope Pushdown",y:"vB5OHsJ3EME",m:"Triceps"},{n:"Overhead Ext",y:"k3S3rVGMuCo",m:"Tri Long Head"},{n:"Skull Crushers",y:"d_KZxkY_0cM",m:"Triceps"},{n:"Close-Grip Bench",y:"nEF0bv2FW94",m:"Tri, Chest"},{n:"Dips",y:"wjUmnZH528Y",m:"Tri, Chest"},{n:"V-Bar Pushdown",y:"nzgSJ9Kd9mQ",m:"Triceps"}],
+bv:[{n:"Pull-Ups",y:"eGo4IYlbE5g",m:"Lats, Bi"},{n:"Wide Pulldown",y:"CAwf7n6Luuc",m:"Lats"},{n:"Close Pulldown",y:"an1BMInTXLk",m:"Lats"},{n:"Neutral Pulldown",y:"jGapUMPH2gg",m:"Lats"}],
+bh:[{n:"Barbell Row",y:"FWJR5Ve8bnQ",m:"Back"},{n:"Cable Row",y:"GZbfZ033f74",m:"Back"},{n:"1-Arm DB Row",y:"pYcpY20QaE8",m:"Lats"},{n:"T-Bar Row",y:"j3Igk5nyZE4",m:"Back"},{n:"Chest-Sup Row",y:"H75im3p3ZkE",m:"Upper Back"},{n:"Pendlay Row",y:"T3N-TO4reLQ",m:"Back"}],
+bi:[{n:"Straight-Arm PD",y:"lueEJGjTuPQ",m:"Lats"},{n:"Cable Pullover",y:"AjCKnMf5YCU",m:"Lats"},{n:"Hyperextensions",y:"ph3pddpKzzA",m:"Low Back"}],
+bc:[{n:"Barbell Curls",y:"kwG2ipFRgFo",m:"Biceps"},{n:"DB Curls",y:"ykJmrZ5v0Oo",m:"Biceps"},{n:"Hammer Curls",y:"zC3nLlEvin4",m:"Brachialis"},{n:"Incline Curls",y:"soxrZlIl35U",m:"Biceps"},{n:"Preacher Curls",y:"fIWP-FRFNU0",m:"Biceps"},{n:"Cable Curls",y:"NFzpj38GC_M",m:"Biceps"},{n:"Spider Curls",y:"mOBp4VzSsTo",m:"Biceps"}],
+qc:[{n:"Barbell Squat",y:"bEv6CCg2BC8",m:"Quads"},{n:"Leg Press",y:"IZxyjW7MPJQ",m:"Quads"},{n:"Hack Squat",y:"0tn5K9NlCfo",m:"Quads"},{n:"Front Squat",y:"m4ytaCJZpl0",m:"Quads"},{n:"Bulgarian Split",y:"2C-uNgKwPLE",m:"Quads"},{n:"Goblet Squat",y:"MeIiIdhvXT4",m:"Quads"}],
+qi:[{n:"Leg Extensions",y:"YyvSfVjQeL0",m:"Quads"},{n:"Walking Lunges",y:"L8fvypPHRoA",m:"Quads"},{n:"Sissy Squat",y:"5MFqMXGUKok",m:"Quads"},{n:"Step-Ups",y:"dQqApCGd5Ag",m:"Quads"}],
+hm:[{n:"Romanian DL",y:"7j-2w4-P14I",m:"Hams"},{n:"Lying Leg Curl",y:"1Tq3QdYUuHs",m:"Hams"},{n:"Seated Leg Curl",y:"F488k7-FEzs",m:"Hams"},{n:"Stiff-Leg DL",y:"CN_7cz3P-1U",m:"Hams"},{n:"Nordic Curl",y:"jI9NxMOxyHc",m:"Hams"},{n:"1-Leg RDL",y:"N4tIcDOYOHI",m:"Hams"}],
+gl:[{n:"Hip Thrust",y:"xDmFkJxPzeM",m:"Glutes"},{n:"Cable Kickback",y:"JXARNN7KKYE",m:"Glutes"},{n:"Glute Bridge",y:"OUgsJ8-Vi0E",m:"Glutes"},{n:"Sumo DL",y:"tfYGqd3DRSE",m:"Glutes"}],
+cv:[{n:"Standing Calf",y:"gwLzBJYoWlI",m:"Calves"},{n:"Seated Calf",y:"JbyjNymZOt0",m:"Calves"},{n:"LP Calf Raise",y:"KTzVN51pMRs",m:"Calves"}],
+ab:[{n:"Hanging Leg Raise",y:"Pr1ieGZ5u4E",m:"Abs"},{n:"Cable Crunches",y:"AV5PmrJqMsI",m:"Abs"},{n:"Ab Rollout",y:"rqiTPmGCBRs",m:"Core"},{n:"Pallof Press",y:"AH_QZLm_0-s",m:"Core"},{n:"Plank",y:"ASdvN_XEl_c",m:"Core"},{n:"Bicycle Crunch",y:"9FGilxCbdz8",m:"Obliques"},{n:"Dead Bug",y:"4XLEnwUr1d8",m:"Core"},{n:"Mt Climbers",y:"nmwgirgXLYM",m:"Core"}]};
+
+const RP={1:[{s:4,r:"8-10",x:"90s",l:"Hypertrophy"},{s:3,r:"10-12",x:"75s",l:"Moderate"},{s:4,r:"6-8",x:"120s",l:"Strength"},{s:3,r:"12-15",x:"60s",l:"Endurance"}],2:[{s:4,r:"10-12",x:"60s",l:"Volume"},{s:3,r:"12-15",x:"45s",l:"Pump"},{s:4,r:"8-10",x:"75s",l:"Controlled"},{s:5,r:"6-8",x:"90s",l:"Heavy"},{s:3,r:"15-20",x:"30s",l:"Burnout"}],3:[{s:4,r:"12-15",x:"45s",l:"Shred"},{s:3,r:"15-20",x:"30s",l:"Extreme"},{s:5,r:"8-10",x:"60s",l:"Volume"},{s:4,r:"10-12",x:"45s",l:"Drop Set",nt:"Drop last set"},{s:3,r:"20-25",x:"30s",l:"Finisher"}]};
+
+// MEALS — no coffee, no asparagus, no sweet potato, all easy to find
+const ML={b:[
+{f:"4 egg whites + 2 eggs, 80g oats + berries, green tea",k:480,p:38,c:52,a:14},
+{f:"Greek yogurt (200g) + granola + banana + honey, chamomile tea",k:470,p:35,c:58,a:12},
+{f:"Protein pancakes (whey+egg+60g oats+banana), sugar-free syrup",k:485,p:40,c:55,a:12},
+{f:"Overnight oats: 60g oats+whey+chia+almond milk+berries",k:430,p:36,c:48,a:12},
+{f:"Shakshuka: 3 eggs in tomato sauce + feta + toast",k:460,p:32,c:38,a:18},
+{f:"Avocado toast (2 slices) + 3 egg whites + smoked turkey",k:440,p:34,c:40,a:16}],
+s1:[{f:"Apple + 25g almonds",k:230,p:7,c:25,a:14},{f:"2 rice cakes + 2tbsp peanut butter",k:240,p:8,c:24,a:14},{f:"Protein bar",k:210,p:20,c:22,a:8},{f:"Greek yogurt (150g) + berries",k:170,p:16,c:18,a:3},{f:"Beef jerky (50g) + banana",k:220,p:22,c:24,a:4},{f:"Hummus (60g) + carrot & celery sticks",k:180,p:6,c:16,a:10}],
+l:[{f:"200g chicken, 150g rice, salad, olive oil",k:580,p:48,c:58,a:14},{f:"200g beef mince, 150g roasted potato, broccoli",k:575,p:45,c:52,a:18},{f:"250g salmon, 160g quinoa, roasted veg",k:590,p:46,c:48,a:20},{f:"200g turkey, 150g brown rice, grilled peppers",k:520,p:48,c:50,a:10},{f:"Tuna salad: 2 cans, 150g couscous, olive oil, lemon",k:530,p:52,c:48,a:10},{f:"Chicken shawarma (homemade), rice, garlic sauce",k:570,p:44,c:52,a:16},{f:"Tilapia (200g), roasted potato, green beans",k:500,p:42,c:42,a:12},{f:"Chicken stir-fry (200g) with peppers, jasmine rice",k:540,p:44,c:54,a:12}],
+pw:[{f:"Banana + whey shake",k:220,p:26,c:28,a:2},{f:"2 rice cakes + turkey slices",k:200,p:22,c:24,a:3},{f:"Dates (30g) + green tea",k:100,p:1,c:24,a:0},{f:"Toast + honey + green tea",k:180,p:3,c:36,a:2},{f:"Cottage cheese (100g) + dates",k:180,p:16,c:26,a:2}],
+d:[{f:"220g chicken thigh, rice, roasted zucchini, lemon",k:560,p:42,c:52,a:16},{f:"200g white fish, roasted potato, green beans, olive oil",k:500,p:40,c:48,a:12},{f:"200g steak, rice, grilled broccoli",k:570,p:44,c:48,a:18},{f:"200g shrimp stir-fry, rice, bok choy",k:480,p:40,c:46,a:10},{f:"Salmon (200g), mashed potato, spinach",k:540,p:38,c:40,a:22},{f:"Chicken kebab, tabbouleh, hummus, pita",k:550,p:42,c:48,a:16},{f:"Turkey meatballs, pasta, tomato sauce",k:530,p:44,c:50,a:12},{f:"Beef kofta, basmati rice, fattoush salad",k:560,p:42,c:52,a:16}],
+e:[{f:"Casein shake + 10g almond butter",k:170,p:26,c:6,a:8},{f:"Greek yogurt + walnuts",k:175,p:18,c:8,a:12},{f:"2 boiled eggs + cucumber",k:160,p:14,c:2,a:10},{f:"Cottage cheese + cinnamon",k:130,p:18,c:6,a:3},{f:"Casein shake in water",k:120,p:24,c:4,a:2}],
+su:[{f:"3 eggs+80g oats+banana+almonds+1.5L water",k:650,p:36,c:70,a:24},{f:"Yogurt+granola+dates+whey shake+water",k:680,p:44,c:72,a:18},{f:"Overnight oats+whey+chia+banana+PB+water",k:700,p:42,c:74,a:22}],
+if:[{f:"Dates+water+laban → chicken+rice+salad",k:750,p:52,c:82,a:18},{f:"Dates+soup → salmon+roasted potato+veg",k:780,p:48,c:68,a:28},{f:"Dates+water → beef kofta+rice+fattoush+hummus",k:800,p:46,c:78,a:24}],
+is:[{f:"Whey+banana+almond milk — 1hr after iftar",k:320,p:32,c:30,a:6},{f:"Rice cakes+PB+whey — before bed",k:350,p:28,c:32,a:12},{f:"Greek yogurt+honey+nuts — before bed",k:300,p:20,c:28,a:14}]};
+
+const SP=[
+{n:"Creatine Monohydrate",d:"5g daily",w:"Post-workout / morning",nt:"500+ studies. Never cycle. Take every single day forever.",c:1,cy:"NO CYCLING NEEDED"},
+{n:"Whey Isolate",d:"1-2 scoops",w:"Post-workout + as needed",nt:"It's food in powder form. Use daily.",c:1,cy:"NO CYCLING"},
+{n:"Multivitamin",d:"1 tab",w:"Breakfast",nt:"Covers micro gaps. Daily year-round.",c:1,cy:"NO CYCLING"},
+{n:"Fish Oil (Omega-3)",d:"2-3g EPA/DHA",w:"With lunch",nt:"Anti-inflammatory. Joints, heart, brain.",c:0,r:1,cy:"NO CYCLING"},
+{n:"Vitamin D3",d:"4000 IU",w:"Breakfast",nt:"Most people in UAE are deficient despite sun. Get blood test at 3 months.",c:0,r:1,cy:"NO CYCLING"},
+{n:"Magnesium Glycinate",d:"400mg",w:"Before bed",nt:"Deep sleep + no cramps. Most people are deficient.",c:0,r:1,cy:"NO CYCLING"},
+{n:"Electrolytes",d:"1 serving",w:"Training & fasting days",nt:"Critical in UAE heat. Sodium+potassium+magnesium.",c:0,r:1,cy:"AS NEEDED"},
+{n:"Caffeine / Pre-workout",d:"200mg",w:"30 min pre-training",nt:"3-5% strength boost. Only supp that needs cycling.",c:0,cy:"CYCLE: 6-8 weeks ON → 1 week OFF. Use training days only (4-5x/wk). The off-week will feel sluggish — push through. Tolerance resets fully."},
+{n:"Casein Protein",d:"1 scoop",w:"Before bed",nt:"Slow 8hr release. Feeds muscles while you sleep.",c:0,cy:"NO CYCLING"}];
+
+// WORKOUT GENERATOR
+function genWeek(wk){
+const p=gph(wk),r=rng(wk*7919+42),sc=RP[p],ps=()=>sc[Math.floor(r()*sc.length)],mk=(e,o)=>({...e,...(o||ps())}),f=S.fasting;
+const c1=pk(X.cc,2,r),c2=pk(X.ci,1,r),s1=pk(X.sp,1,r),s2=pk(X.sl,1,r),s3=pk(X.sr,1,r),t1=pk(X.tr,2,r);
+const push={nm:"PUSH",sb:"Chest · Shoulders · Triceps",ic:"💪",ex:f?[mk(c1[0],{...ps(),nt:"Lighter today"}),mk(c2[0]),mk(s1[0]),mk(s2[0],{s:3,r:"12-15",x:"45s",l:"Light"}),mk(t1[0]),mk(t1[1])]:[mk(c1[0],{...ps(),nt:"2 warm-up sets"}),mk(c1[1]),mk(c2[0]),mk(s1[0]),mk(s2[0],{s:4,r:"12-15",x:"45s",l:"Mind-Muscle"}),mk(s3[0]),mk(t1[0]),mk(t1[1])],fn:!f&&p>=2?"Burnout: 3×15 push-ups + 3×15 lateral raises":"",cd:f?"Skip cardio":"15 min incline walk (12%, 5.5km/h)"};
+const b1=pk(X.bv,1,r),b2=pk(X.bh,2,r),b3=pk(X.bi,1,r),b4=pk(X.bc,2,r),s4=pk(X.sr,1,r);
+const pull={nm:"PULL",sb:"Back · Biceps · Rear Delts",ic:"🏋️",ex:f?[mk(b1[0]),mk(b2[0]),mk(b3[0]),mk(s4[0]),mk(b4[0]),mk(b4[1])]:[mk(b1[0],{...ps(),nt:"Full stretch"}),mk(b2[0]),mk(b2[1]),mk(b3[0]),mk(s4[0],{s:4,r:"12-15",x:"45s",l:"Squeeze"}),mk(b4[0]),mk(b4[1])],fn:!f&&p>=2?"3 sets max pull-ups + 21s curl":"",cd:f?"":"15 min stairmaster"};
+const rest={nm:"RECOVERY",sb:"Easy Run · Stretch",ic:"🧘",at:["Easy 3-4km run (conversational pace)","Full body stretching 15-20 min","Foam rolling all major groups","Optional: light swimming"]};
+const q1=pk(X.qc,2,r),q2=pk(X.qi,1,r),h1=pk(X.hm,2,r),g1=pk(X.gl,1,r),c3=pk(X.cv,1,r),a1=pk(X.ab,3,r);
+const legs={nm:"LEGS + ABS",sb:"Quads · Hams · Core",ic:"🦵",ex:f?[mk(q1[0],{...ps(),nt:"Focus form"}),mk(q2[0]),mk(h1[0]),mk(g1[0]),mk(c3[0],{s:3,r:"15-20",x:"45s",l:"ROM"}),mk(a1[0],{s:3,r:"12-15",x:"45s",l:"Core"}),mk(a1[1],{s:3,r:"12-15",x:"45s",l:"Core"})]:[mk(q1[0],{...ps(),nt:"2 warm-ups, deep"}),mk(q1[1]),mk(q2[0]),mk(h1[0]),mk(h1[1]),mk(g1[0]),mk(c3[0],{s:4,r:"15-20",x:"45s",l:"ROM"}),mk(a1[0],{s:3,r:"12-15",x:"45s",l:"Core"}),mk(a1[1],{s:3,r:"12-15",x:"45s",l:"Core"}),mk(a1[2],{s:3,r:"12-15",x:"45s",l:"Core"})],fn:!f&&p>=2?"Lunges 3×20 + Wall sit 3×45s":""};
+const u1=pk(X.cc,1,r),u2=pk(X.bv,1,r),u3=pk(X.bh,1,r),u4=pk(X.ci,1,r),u5=pk(X.sp,1,r),u6=pk(X.sl,1,r),u7=pk(X.bc,1,r),u8=pk(X.tr,1,r),u9=pk(X.ab,2,r);
+const upper={nm:"UPPER HYPERTROPHY",sb:"Full Upper · Supersets",ic:"⚡",ex:[mk(u1[0]),mk(u2[0]),{...mk(u4[0],{s:3,r:"12-15",x:"30s",l:"SS-A1"}),ss:1},{...mk(u3[0],{s:3,r:"12-15",x:"60s",l:"SS-A2"}),ss:1},mk(u5[0]),mk(u6[0],{s:4,r:"15-20",x:"30s",l:"Pump"}),{...mk(u7[0],{s:3,r:"12-15",x:"30s",l:"SS-B1"}),ss:1},{...mk(u8[0],{s:3,r:"12-15",x:"60s",l:"SS-B2"}),ss:1},mk(u9[0],{s:3,r:"12-15",x:"45s",l:"Core"}),mk(u9[1],{s:3,r:"12-15",x:"45s",l:"Core"})],fn:!f&&p>=2?"Giant: 10 push-ups+10 curls+10 laterals ×3":"",cd:f?"":"10 min HIIT sprints"};
+const rp=getRn(wk);
+const run={nm:"RUN DAY",sb:rp.t+" · "+rp.tg,ic:"🏃",rn:1,rp,po:pk(X.ab,3,r).map(e=>mk(e,{s:3,r:"15-20",x:"30s",l:"Core"}))};
+const off={nm:"FULL REST",sb:"Sleep · Recover",ic:"😴",at:["Complete rest","Sleep 7-9 hours","Drink 3.5-4L water","Meal prep","Light stretching if stiff"]};
+return{wk,phase:p,days:[push,pull,rest,legs,upper,run,off]};}
+
+function genMeals(wk){const p=gph(wk),mp=ME.phases[p-1],r=rng(wk*3571),pk3=(a)=>pk(a,3,r);
+if(S.fasting)return{...mp,fast:1,meals:[{t:"SUHOOR",nm:"Pre-Dawn",o:pk3(ML.su)},{t:"IFTAR",nm:"Break Fast",o:pk3(ML.if)},{t:"EVENING",nm:"Night Meal",o:pk3(ML.is)}]};
+return{...mp,fast:0,meals:[{t:"7:00 AM",nm:"Breakfast",o:pk3(ML.b)},{t:"10:00 AM",nm:"Snack",o:pk3(ML.s1)},{t:"1:00 PM",nm:"Lunch",o:pk3(ML.l)},{t:"3:30 PM",nm:"Pre-Workout",o:pk3(ML.pw)},{t:"6:30 PM",nm:"Dinner",o:pk3(ML.d)},{t:"9:00 PM",nm:"Evening",o:pk3(ML.e)}]};}
+
+// ═══════════════ RENDER ═══════════════
+function render(){
+const W=genWeek(S.week),p=W.phase,c=PC[p],mp=genMeals(S.week),d=W.days[S.day]||W.days[0],pn=ME.phases[p-1];
+document.documentElement.style.setProperty('--p',c.p);document.documentElement.style.setProperty('--bg',c.bg);document.documentElement.style.setProperty('--c',c.c);save();
+let h=`<div class="hdr"><div class="htop"><div class="hn"><b>X11</b> · ${ME.name}</div>
+<div class="ft${S.fasting?' on':''}" onclick="S.fasting=!S.fasting;render()">☪ ${S.fasting?'FASTING':'Fast'}</div></div>
+<div class="pt" style="background:${c.p}15;color:${c.p}">PHASE ${p} — ${pn.n}</div>
+<div class="wti">Week ${S.week} <span>/ 24</span></div>
+<div class="ws">Phase ${gpw(S.week)}/8 · ${mp.cal} cal · ${pn.l}${S.fasting?' · ☪':''}</div>
+<div class="pb"><div class="pf" style="width:${(S.week/24)*100}%;background:linear-gradient(90deg,${c.p},${c.p}88)"></div></div></div>
+<div class="wn"><button class="wb" style="background:${c.p}10;border-color:${c.p}30;color:${c.p}" ${S.week<=1?'disabled':''} onclick="S.week--;S.exp=null;render()">◀</button>
+<span style="color:#444;font-size:12px">Week ${S.week}</span>
+<button class="wb" style="background:${c.p}10;border-color:${c.p}30;color:${c.p}" ${S.week>=24?'disabled':''} onclick="S.week++;S.exp=null;render()">▶</button></div>
+<div class="ds">${DAYS.map((dy,i)=>`<button class="db${S.day===i?' a':''}" style="${S.day===i?`background:${c.p};color:#000`:''}" onclick="S.day=${i};S.exp=null;render()"><span class="i">${W.days[i]?.ic||''}</span>${dy.slice(0,3)}</button>`).join('')}</div>
+<div class="cnt" style="background:${c.bg}">
+${['workout','meals'].includes(S.tab)?`<div class="dh"><h2>${d.ic} ${d.nm}</h2><p>${d.sb}</p></div>`:''}
+${S.fasting&&S.tab==='workout'?'<div class="fb">☪ Fasting — Reduced volume</div>':''}
+${S.tab==='workout'?rW(d,p,c):S.tab==='meals'?rM(mp,c):S.tab==='run'?rR(S.week,c):S.tab==='track'?rP(c):S.tab==='shop'?rSh(c):S.tab==='supps'?rSp(c):rI(W,c,mp)}</div>
+<div class="tbr">${[{id:'workout',i:'🏋️',l:'Train'},{id:'meals',i:'🥩',l:'Meals'},{id:'run',i:'🏃',l:'Run'},{id:'track',i:'📈',l:'Track'},{id:'shop',i:'🛒',l:'Shop'},{id:'supps',i:'💊',l:'Supps'},{id:'info',i:'📊',l:'Info'}].map(t=>`<button class="t${S.tab===t.id?' a':''}" style="${S.tab===t.id?`color:${c.p}`:''}" onclick="S.tab='${t.id}';render()"><span class="i">${t.i}</span>${t.l}</button>`).join('')}</div>`;
+document.getElementById('app').innerHTML=h;}
+
+function exC(e,k,op,c){return`<div class="ec${op?' op':''}" style="${op?`background:${c.c}`:''}" onclick="S.exp=S.exp==='${k}'?null:'${k}';render()"><div class="etp"><div><p class="en">${e.n}${e.ss?'<span class="ssb">SS</span>':''}</p><p class="em">${e.m}</p></div><span class="ea">▾</span></div><div class="et"><span class="tg tp">${e.s} sets</span><span class="tg ty">${e.r} reps</span><span class="tg tb2">${e.x}</span></div><div class="ed">${e.nt?`<p class="eno">💡 ${e.nt}</p>`:''}<a href="https://www.youtube.com/watch?v=${e.y}" target="_blank" class="vd" onclick="event.stopPropagation()">▶ Demo</a></div></div>`;}
+
+function rW(d,p,c){
+if(d.at)return`<p class="st" style="color:${c.p};margin-top:0">${d.nm.includes('FULL')?'📋 REST':'📋 RECOVERY'}</p>${d.at.map(a=>`<div class="ac">${a}</div>`).join('')}<div class="nb" style="border-color:${c.p};background:${c.p}08">${d.nm.includes('FULL')?'💤 Growth = rest. Sleep 7-9h.':'💡 Light movement speeds recovery.'}</div>`;
+if(d.rn){const rp=d.rp;return`<div class="rc"><p style="color:#09F;font-size:11px;font-weight:700;letter-spacing:1px">🏃 RUN</p><h4 style="font-size:16px;font-weight:800;margin-top:3px">${rp.t}</h4><p style="font-size:13px;color:#999;margin-top:4px">${rp.p}</p><div class="rs"><div><p style="font-size:16px;font-weight:800;color:#09F">${rp.tg}</p><p style="font-size:9px;color:#666;margin-top:2px">Target</p></div></div><p style="font-size:12px;color:#666;margin-top:10px;font-style:italic">💡 ${rp.nt}</p></div>${S.fasting?'<div class="nb" style="border-color:#FFD700;background:rgba(255,215,0,.04)">☪ Run AFTER iftar. Easy pace, shorter.</div>':''}<p class="st" style="color:${c.p}">POST-RUN CORE</p>${d.po.map((e,i)=>exC(e,'r-'+i,S.exp==='r-'+i,c)).join('')}`;}
+return d.ex.map((e,i)=>exC(e,S.day+'-'+i,S.exp===S.day+'-'+i,c)).join('')+(d.fn?`<div class="fn" style="background:${c.p}08;border:1px solid ${c.p}20"><p style="font-size:11px;font-weight:700;color:${c.p};letter-spacing:1px">🔥 FINISHER</p><p style="margin-top:5px;font-size:13px">${d.fn}</p></div>`:'')+(d.cd?`<div class="ac" style="margin-top:10px"><p style="color:#09F;font-size:11px;font-weight:700;letter-spacing:1px">🏃 CARDIO</p><p style="margin-top:4px">${d.cd}</p></div>`:'');}
+
+function rM(mp,c){return`${mp.fast?'<div class="fb">☪ Fasting Day</div>':''}
+<div class="mg"><div class="mb"><p class="mv" style="color:${c.p}">${mp.cal}</p><p class="ml">Cal</p></div><div class="mb"><p class="mv" style="color:#FF4757">${mp.p}g</p><p class="ml">Protein</p></div><div class="mb"><p class="mv" style="color:#FFD700">${mp.c}g</p><p class="ml">Carbs</p></div><div class="mb"><p class="mv" style="color:#09F">${mp.f}g</p><p class="ml">Fat</p></div></div>
+${mp.fast?'<div class="nb" style="border-color:#FFD700;background:rgba(255,215,0,.04);margin-top:10px">⚡ ~1600-1800 cal. Lower intensity. Hydrate at suhoor.</div>':''}
+<p class="st" style="color:${c.p};margin-top:14px">${mp.fast?'☪ FASTING':'📋 DAILY'} MEALS</p><p style="font-size:11px;color:#444;margin:-4px 0 10px">Pick one per meal</p>
+${mp.meals.map(m=>`<div class="mc"><p style="color:${c.p};font-size:10px;font-weight:700;letter-spacing:1px">${m.t}</p><p style="font-size:15px;font-weight:700;margin:2px 0 7px">${m.nm}</p>${m.o.map(o=>`<div class="mo"><p style="font-size:12px;line-height:1.5">${o.f}</p><div class="mm"><span class="mp" style="color:#666;background:#0f0f0f">${o.k} cal</span><span class="mp" style="color:#FF4757;background:rgba(255,71,87,.08)">P:${o.p}g</span><span class="mp" style="color:#FFD700;background:rgba(255,215,0,.08)">C:${o.c}g</span><span class="mp" style="color:#09F;background:rgba(0,153,255,.08)">F:${o.a}g</span></div></div>`).join('')}</div>`).join('')}
+<div style="background:rgba(0,102,255,.05);border:1px solid rgba(0,102,255,.12);border-radius:13px;padding:13px;margin-top:10px;text-align:center"><div style="font-size:22px">💧</div><div style="color:#09F;font-size:15px;font-weight:700;margin-top:3px">${mp.fast?'SUHOOR: 1.5L+ WATER':'3.5L+ DAILY'}</div></div>`;}
+
+function rR(wk,c){const rp=getRn(wk);return`<p class="st" style="color:${c.p};margin-top:0">🏃 5K → 10K PROGRAM</p>
+<div class="rc"><p style="color:#09F;font-size:11px;font-weight:700;letter-spacing:1px">THIS WEEK</p><h4 style="font-size:16px;font-weight:800;margin-top:3px">${rp.t}</h4><p style="font-size:13px;color:#999;margin-top:4px">${rp.p}</p><div class="rs"><div><p style="font-size:16px;font-weight:800;color:#09F">${rp.tg}</p><p style="font-size:9px;color:#666;margin-top:2px">Target</p></div><div><p style="font-size:16px;font-weight:800;color:#09F">${wk<=8?'6:00+':wk<=16?'5:30':'5:00'}</p><p style="font-size:9px;color:#666;margin-top:2px">min/km</p></div></div><p style="font-size:12px;color:#666;margin-top:10px;font-style:italic">💡 ${rp.nt}</p></div>
+<p class="st" style="color:${c.p}">FULL PLAN</p>${RN.map(r=>{const cur=wk>=r.wk[0]&&wk<=r.wk[1],dn=wk>r.wk[1];return`<div class="ac" style="${cur?`border-color:${c.p}30;background:${c.p}05`:dn?'opacity:.4':''}"><div style="display:flex;justify-content:space-between"><div><span style="font-size:12px;font-weight:700;${cur?`color:${c.p}`:'color:#555'}">Wk ${r.wk[0]}-${r.wk[1]}</span><span style="font-size:13px;font-weight:700;margin-left:8px">${r.t}</span></div>${cur?`<span class="tg tp">NOW</span>`:dn?'<span style="color:#333">✓</span>':''}</div><p style="font-size:12px;color:#666;margin-top:3px">${r.tg}</p></div>`}).join('')}`;}
+
+function rP(c){return`<p class="st" style="color:${c.p};margin-top:0">📈 LOG</p><p style="font-size:11px;color:#444;margin-bottom:10px">Weekly: same day, morning, fasted</p>
+<div class="lr"><input class="li" id="lw" type="number" inputmode="decimal" placeholder="Weight (kg)"><input class="li" id="lb" type="number" inputmode="decimal" placeholder="BF %">
+<button style="padding:10px 16px;border-radius:10px;border:none;font-size:13px;font-weight:700;background:${c.p};color:#000;cursor:pointer" onclick="addLog()">Log</button></div>
+${LOG.length?`<p class="st" style="color:${c.p}">HISTORY</p>${LOG.slice().reverse().map(l=>`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #0a0a0a;font-size:13px"><span style="color:#555">Wk ${l.wk}</span><span><b>${l.w}kg</b></span><span style="color:#888">${l.bf?l.bf+'%':''}</span></div>`).join('')}`:''}
+<p class="st" style="color:${c.p};margin-top:20px">🎯 MILESTONES & CHEAT MEALS</p><p style="font-size:11px;color:#444;margin-bottom:10px">Hit the target → earn the reward</p>
+${MST.map(m=>{const dn=S.week>m.wk,cur=S.week>=m.wk-1&&S.week<=m.wk;
+return`<div class="ms${dn?' d':''}${cur?' c':''}"><div class="msl"></div><div class="msc">
+<p style="font-size:11px;color:${cur?c.p:'#555'};font-weight:600">${cur?'→ ':dn?'✓ ':''}WEEK ${m.wk}</p>
+<p style="font-size:13px;font-weight:700;margin-top:2px">${m.w}kg · ${m.bf}%</p>
+<p style="font-size:11px;color:#666;margin-top:2px">${m.nt}</p>
+${m.ch?`<div class="cheat" style="margin-top:6px"><p class="wk">🎉 CHEAT MEAL EARNED</p><p class="rw">${m.cr}</p><p class="rl">Rules: eat normal all day, cheat = dinner only. Train that day. No sugary drinks. Don't weigh yourself next morning.</p></div>`:''}</div></div>`}).join('')}`;}
+
+function rSh(c){return`<p class="st" style="color:${c.p};margin-top:0">🛒 WEEKLY SHOPPING LIST</p><p style="font-size:11px;color:#444;margin-bottom:6px">Keep these stocked — never miss a meal</p>
+${Object.entries(SHOP).map(([cat,items])=>`<div class="shop-cat" style="color:${c.p}">${cat}</div>${items.map(([n,q])=>`<div class="shop-item"><span>${n}</span><span class="shop-qty">${q}</span></div>`).join('')}`).join('')}
+<p class="st" style="color:#FF4757;margin-top:24px">🚫 NEVER BUY / AVOID</p><p style="font-size:11px;color:#444;margin-bottom:8px">These will directly sabotage your cut</p>
+${AVOID.map(a=>`<div class="avoid-item"><p class="nm">${a.n}</p><p class="why">${a.w}</p></div>`).join('')}
+<div class="nb" style="border-color:${c.p};background:${c.p}06;margin-top:16px">💡 <b>Pro tip:</b> Shop with a list, never hungry. Stick to the perimeter of the store (fresh food). If it has more than 5 ingredients on the label, skip it.</div>`;}
+
+function rSp(c){return`<p class="st" style="color:${c.p};margin-top:0">💊 STACK & CYCLING</p>
+${SP.map(s=>`<div class="sc"><div class="sct"><p style="font-size:14px;font-weight:700">${s.n}</p><span class="tg ${s.c?'tg2':s.r?'to':'tb2'}">${s.c?'TAKING':s.r?'ADD':'OPTIONAL'}</span></div><p style="font-size:12px;font-weight:600;color:${c.p};margin-top:5px">${s.d} — ${s.w}</p><p style="font-size:11px;color:#666;margin-top:3px">${s.nt}</p>
+<div style="margin-top:6px;padding:6px 10px;background:${s.cy.includes('NO')?'rgba(0,255,135,.04)':'rgba(255,215,0,.06)'};border:1px solid ${s.cy.includes('NO')?'rgba(0,255,135,.1)':'rgba(255,215,0,.15)'};border-radius:8px;font-size:11px;color:${s.cy.includes('NO')?'#0F8':'#FFD700'};font-weight:600">🔄 ${s.cy}</div></div>`).join('')}
+<p class="st" style="color:${c.p};margin-top:20px">⏰ TIMING</p>
+${(S.fasting?[{t:"SUHOOR",d:"Multi+D3+Omega3+Creatine+Electrolytes"},{t:"IFTAR",d:"Whey shake (within 30min)"},{t:"NIGHT",d:"Magnesium+Casein"}]:[{t:"7AM",d:"Multivitamin + D3"},{t:"1PM",d:"Fish Oil"},{t:"Pre-gym",d:"Pre-workout (caffeine)"},{t:"Post-gym",d:"Creatine 5g + Whey"},{t:"9PM",d:"Magnesium 400mg"}]).map(t=>`<div class="tr"><span style="color:${c.p};font-size:12px;font-weight:700;min-width:60px">${t.t}</span><span style="font-size:12px">${t.d}</span></div>`).join('')}`;}
+
+function rI(W,c,mp){return`<p class="st" style="color:${c.p};margin-top:0">📊 HASHEM</p>
+<div class="ig"><div class="ic"><p class="iv" style="color:${c.p}">76<span>kg</span></p><p class="il">Start</p></div><div class="ic"><p class="iv" style="color:${c.p}">~22<span>%</span></p><p class="il">Start BF</p></div><div class="ic"><p class="iv" style="color:${c.p}">67<span>kg</span></p><p class="il">Target</p></div><div class="ic"><p class="iv" style="color:${c.p}">10<span>%</span></p><p class="il">Target BF</p></div></div>
+<p class="st" style="color:${c.p};margin-top:20px">📅 PHASES</p>
+${ME.phases.map((p2,i)=>{const a=i+1===W.phase,cm=ME.phases.slice(0,i).reduce((s,x)=>s+x.wk,0);return`<div style="background:#0a0a0a;border:1px solid #151515;border-radius:13px;padding:13px;margin-bottom:7px;opacity:${a?1:.5};border-left:3px solid ${PC[i+1].p}"><div style="display:flex;justify-content:space-between"><p style="font-size:14px;font-weight:700;color:${PC[i+1].p}">PHASE ${i+1}: ${p2.n}</p>${a?`<span class="tg" style="background:${PC[i+1].p}20;color:${PC[i+1].p}">NOW</span>`:''}</div><p style="font-size:11px;color:#555;margin-top:2px">Wk ${cm+1}–${cm+p2.wk} · ${p2.cal} cal</p><p style="font-size:12px;color:#888;margin-top:4px">${p2.l} · P:${p2.p}g C:${p2.c}g F:${p2.f}g</p></div>`}).join('')}
+<p class="st" style="color:${c.p};margin-top:20px">🏋️ SPLIT</p>
+${DAYS.map((d,i)=>`<div style="display:flex;gap:10px;padding:7px 0;border-bottom:1px solid #0a0a0a"><span style="color:${c.p};font-size:12px;font-weight:700;min-width:72px">${d}</span><span style="font-size:12px;${W.days[i]?.ex?.length||W.days[i]?.rn?'color:#fff':'color:#333'}">${W.days[i]?.ic||''} ${W.days[i]?.nm||''}</span></div>`).join('')}
+<p class="st" style="color:${c.p};margin-top:20px">⚡ RULES</p>
+${["Progressive overload when you hit all reps","Workouts randomize weekly — no adaptation","Track weights, reps & how you felt","Sleep 7-9h — this is when you grow","Weigh in weekly: same day, fasted","Progress photos every 2 weeks","Phase 3: refeed +400 carbs every 10-14 days","Miss a day? Continue — never double up","Run program is separate — don't skip it","Abu Dhabi: extra water + electrolytes always"].map((r,i)=>`<div style="padding:7px 0;border-bottom:1px solid #0a0a0a;display:flex;gap:7px"><span style="color:${c.p};font-weight:700;min-width:18px">${i+1}.</span><span style="font-size:12px;line-height:1.5">${r}</span></div>`).join('')}
+
+<p class="st" style="color:${c.p};margin-top:28px">🏆 AFTER WEEK 24 — MAINTENANCE LIFE</p>
+<div class="maint-card"><h4>Calories: ${MAINT.cal}/day</h4><p>Back to maintenance. No deficit. P:${MAINT.p}g C:${MAINT.c}g F:${MAINT.f}g</p></div>
+<div class="maint-card"><h4>Training: ${MAINT.training}</h4><p>Drop to 4 gym days. You've earned the extra rest. Keep intensity high but volume drops 20%.</p></div>
+<div class="maint-card"><h4>Cardio: ${MAINT.cardio}</h4><p>Run for fun now. Maintain your 10K ability. Add a daily walk for general health.</p></div>
+<div class="maint-card"><h4>Lifestyle Rules</h4><p>${MAINT.rules.map((r,i)=>`${i+1}. ${r}`).join('<br>')}</p></div>
+<div class="nb" style="border-color:${c.p};background:${c.p}06;margin-top:16px">🎯 <b>GOAL:</b> 76kg@22% → 67kg@10% in 24 weeks. Then maintain for life. Every rep counts, Hashem.</div>
+<button class="rb" onclick="if(confirm('Reset all progress?')){LOG=[];S.week=1;save();render()}">🔄 Reset</button>`;}
+
+function addLog(){const w=parseFloat(document.getElementById('lw')?.value),b=parseFloat(document.getElementById('lb')?.value);if(!w)return;LOG.push({wk:S.week,w,bf:b||null});save();render();}
+render();
+</script>
+</body>
+</html>
