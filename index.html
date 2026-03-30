@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="X11 SHRED">
+<meta name="theme-color" content="#000">
+<link rel="apple-touch-icon" href="icon.png">
+<title>X11 SHRED — Hashem</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--p:#00FF87;--bg:#070f0b;--c:#0d1f16}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',system-ui,sans-serif;background:#000;color:#fff;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.app{max-width:430px;margin:0 auto;min-height:100dvh;position:relative;padding-bottom:76px}
+.hdr{padding:max(env(safe-area-inset-top),14px) 16px 12px;background:linear-gradient(180deg,var(--bg),#000);border-bottom:1px solid rgba(0,255,135,.1)}
+.htop{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.hn{font-size:13px;color:#555}.hn b{color:var(--p)}
+.ft{display:flex;align-items:center;gap:6px;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.2);padding:4px 10px;border-radius:20px;font-size:11px;color:#FFD700;cursor:pointer;font-weight:600}
+.ft.on{background:rgba(255,215,0,.2);border-color:#FFD700}
+.pt{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:1.5px}
+.wti{font-size:24px;font-weight:800;letter-spacing:-.5px;margin-top:4px}.wti span{color:#333;font-weight:400;font-size:15px}
+.ws2{font-size:12px;color:#666;margin-top:3px}
+.pb{width:100%;height:4px;background:#151515;border-radius:2px;margin-top:8px;overflow:hidden}
+.pf{height:100%;border-radius:2px;transition:width .5s}
+.wn{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:#050505}
+.wb{padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid;transition:.1s}
+.wb:active:not(:disabled){transform:scale(.95)}.wb:disabled{opacity:.3}
+.ds{display:flex;gap:3px;padding:6px 10px;overflow-x:auto;background:#030303;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.ds::-webkit-scrollbar{display:none}
+.db{flex:0 0 auto;padding:7px 10px;border-radius:10px;border:none;background:#0a0a0a;color:#555;font-size:10px;font-weight:500;cursor:pointer;text-align:center;min-width:46px;transition:.2s}
+.db.a{font-weight:800}.db .i{display:block;font-size:13px;margin-bottom:1px}
+.cnt{padding:12px 16px;min-height:50vh}
+.dh{margin-bottom:14px}.dh h2{font-size:19px;font-weight:800}.dh p{font-size:12px;color:#555;margin-top:2px}
+.diff{display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:8px;font-size:11px;font-weight:700;margin-bottom:14px}
+.ec{background:#0a0a0a;border:1px solid #151515;border-radius:13px;padding:13px;margin-bottom:9px;cursor:pointer;transition:.15s}
+.ec.op{border-color:rgba(0,255,135,.2)}
+.etp{display:flex;justify-content:space-between;align-items:flex-start}
+.en{font-size:14px;font-weight:700;line-height:1.3}
+.ssb{display:inline-block;background:#FFD700;color:#000;padding:1px 7px;border-radius:4px;font-size:9px;font-weight:800;margin-left:6px;vertical-align:middle}
+.em{font-size:10px;color:#444;margin-top:2px}
+.ea{color:#333;font-size:16px;transition:.2s;flex-shrink:0;margin-left:8px}
+.ec.op .ea{transform:rotate(180deg)}
+.et{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap}
+.tg{padding:3px 9px;border-radius:5px;font-size:11px;font-weight:600}
+.tp{background:rgba(0,255,135,.08);color:var(--p)}.ty{background:rgba(255,215,0,.08);color:#FFD700}
+.tb2{background:rgba(0,153,255,.08);color:#09F}.tg2{background:rgba(0,255,135,.12);color:#0F8}
+.to{background:rgba(255,107,53,.12);color:#FF6B35}
+.ed{margin-top:9px;display:none}.ec.op .ed{display:block}
+.eno{font-size:11px;color:#888;font-style:italic;margin-bottom:6px}
+.vd{display:inline-flex;align-items:center;gap:5px;background:#CC0000;color:#fff;padding:7px 13px;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none}
+.vd:active{transform:scale(.95)}
+.st{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin:18px 0 8px}
+.ac{background:#0a0a0a;border:1px solid #151515;border-radius:13px;padding:13px;margin-bottom:7px;font-size:13px;line-height:1.5}
+.nb{border-left:3px solid;padding:10px 12px;border-radius:0 10px 10px 0;font-size:12px;color:#aaa;margin-top:12px;line-height:1.5}
+.mg{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px}
+.mbox{background:#0a0a0a;border-radius:12px;padding:10px 6px;text-align:center;border:1px solid #151515}
+.mv2{font-size:17px;font-weight:800}.ml3{font-size:9px;color:#555;margin-top:3px}
+.mc{background:#0a0a0a;border:1px solid #151515;border-radius:13px;padding:13px;margin-bottom:9px}
+.mo{border:1px solid #151515;border-radius:9px;padding:9px;margin-bottom:5px}
+.mo:first-child{border-color:rgba(0,255,135,.1)}
+.mm{display:flex;gap:5px;margin-top:5px;flex-wrap:wrap}
+.mp{font-size:10px;font-weight:600;padding:2px 6px;border-radius:3px}
+.recipe{font-size:11px;color:#888;margin-top:6px;padding-top:6px;border-top:1px solid #111;line-height:1.5}
+.recipe b{color:#aaa}
+.rc{background:linear-gradient(135deg,rgba(0,153,255,.06),rgba(0,153,255,.02));border:1px solid rgba(0,153,255,.15);border-radius:13px;padding:14px;margin-bottom:9px}
+.rs{display:flex;gap:10px;margin-top:10px}
+.rs div{flex:1;background:rgba(0,153,255,.06);border-radius:8px;padding:8px;text-align:center}
+.ms2{display:flex;align-items:stretch;gap:0;margin-bottom:4px}
+.msl2{width:3px;background:#151515;margin:0 12px;position:relative;flex-shrink:0}
+.msl2::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:11px;height:11px;border-radius:50%;border:2px solid #333;background:#000}
+.ms2.d .msl2{background:var(--p)}.ms2.d .msl2::before{background:var(--p);border-color:var(--p)}
+.ms2.c .msl2::before{border-color:var(--p);box-shadow:0 0 8px rgba(0,255,135,.5)}
+.msc2{flex:1;background:#0a0a0a;border:1px solid #151515;border-radius:10px;padding:10px 12px;margin:3px 0}
+.ms2.c .msc2{border-color:rgba(0,255,135,.3)}
+.lr{display:flex;gap:8px;margin-bottom:8px}
+.li{flex:1;padding:10px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:10px;color:#fff;font-size:14px;font-family:inherit;outline:none;-webkit-appearance:none}
+.li:focus{border-color:var(--p)}
+.sc{background:#0a0a0a;border:1px solid #151515;border-radius:13px;padding:13px;margin-bottom:7px}
+.sct{display:flex;justify-content:space-between;align-items:center}
+.tr{display:flex;gap:10px;align-items:center;background:#0a0a0a;border:1px solid #151515;border-radius:13px;padding:11px;margin-bottom:7px}
+.ig{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.ic{background:#0a0a0a;border-radius:13px;padding:14px;text-align:center;border:1px solid #151515}
+.iv{font-size:26px;font-weight:800}.iv span{font-size:13px}
+.il{font-size:10px;color:#555;margin-top:3px}
+.fb{display:inline-flex;align-items:center;gap:4px;background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.2);padding:3px 10px;border-radius:8px;font-size:11px;color:#FFD700;font-weight:700;margin-bottom:12px}
+.tbr{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;display:flex;background:#050505ee;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid #111;z-index:100;padding-bottom:env(safe-area-inset-bottom)}
+.tab{flex:1;padding:10px 4px 8px;background:transparent;border:none;border-top:2px solid transparent;color:#333;font-size:10px;font-weight:500;text-align:center;cursor:pointer;transition:.2s}
+.tab.a{font-weight:700;border-top-color:currentColor}
+.tab .i{display:block;font-size:16px;margin-bottom:1px}
+.rb{background:none;border:1px solid #222;color:#555;padding:10px;border-radius:10px;font-size:12px;cursor:pointer;margin-top:16px;width:100%;text-align:center}
+.shop-cat{font-size:13px;font-weight:700;margin:14px 0 6px;display:flex;align-items:center;gap:6px}
+.shop-item{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#0a0a0a;border:1px solid #151515;border-radius:10px;margin-bottom:5px;font-size:13px}
+.shop-qty{color:#666;font-size:12px;white-space:nowrap}
+.avoid-item{padding:10px 12px;background:rgba(255,71,87,.04);border:1px solid rgba(255,71,87,.12);border-radius:10px;margin-bottom:5px}
+.avoid-item .anm{font-size:13px;font-weight:600;color:#FF4757}
+.avoid-item .why{font-size:11px;color:#888;margin-top:2px}
+.cheat{background:linear-gradient(135deg,rgba(255,215,0,.06),rgba(255,215,0,.02));border:1px solid rgba(255,215,0,.15);border-radius:10px;padding:10px;margin-top:6px}
+.cls-card{background:linear-gradient(135deg,rgba(255,107,53,.06),rgba(255,107,53,.02));border:1px solid rgba(255,107,53,.15);border-radius:13px;padding:14px;margin-bottom:10px}
+.maint{background:linear-gradient(135deg,rgba(0,255,135,.04),rgba(0,255,135,.01));border:1px solid rgba(0,255,135,.15);border-radius:13px;padding:14px;margin-bottom:9px}
+.maint h4{font-size:15px;font-weight:800;margin-bottom:4px}
+.maint p{font-size:12px;color:#999;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="app" id="a"></div>
+<script>
+// ═══ PROFILE: 77kg, 25% BF, 169cm, 28yo ═══
+// BMR (Mifflin): 10*77+6.25*169-5*28+5=1691 | TDEE: 1691*1.65=2790
+const ME={n:"Hashem",w:78,bf:26,h:169,age:28,tdee:2810,
+ph:[{n:"FOUNDATION",wk:8,cal:2100,p:175,c:200,f:58,l:"Moderate Cut"},{n:"SHRED",wk:8,cal:1900,p:180,c:165,f:52,l:"Aggressive Cut"},{n:"PEAK",wk:8,cal:1750,p:185,c:135,f:48,l:"Peak Shred"}]};
+// LBM=77*0.75=57.75 → Target: 66kg@10%BF
+
+// ═══ MILESTONES (recalculated: 77→66kg, 25→10%BF) ═══
+const MST=[
+{wk:2,w:77,bf:25,nt:"Water weight + first real fat gone",ch:0},
+{wk:4,w:76,bf:24,nt:"Clothes feel looser",ch:1,cr:"Burger & fries or loaded shawarma plate"},
+{wk:6,w:75,bf:22.5,nt:"Face slimming, arms tighter",ch:0},
+{wk:8,w:74,bf:21,nt:"Phase 1 done — visible change",ch:1,cr:"Full restaurant dinner with dessert"},
+{wk:10,w:73,bf:19.5,nt:"Shoulder caps emerging",ch:0},
+{wk:12,w:72,bf:18,nt:"HALFWAY — abs outline showing",ch:1,cr:"Go all out: pizza, sushi, whatever you want"},
+{wk:14,w:71,bf:16,nt:"Arms defined, obliques visible",ch:0},
+{wk:16,w:70,bf:14.5,nt:"Phase 2 done — clearly lean",ch:1,cr:"Celebration dinner — also a refeed"},
+{wk:18,w:69,bf:13,nt:"Striations starting to show",ch:0},
+{wk:20,w:68,bf:12,nt:"6-pack visible, veins popping",ch:1,cr:"One great meal — last before final push"},
+{wk:22,w:67.5,bf:11,nt:"Razor sharp definition",ch:0},
+{wk:24,w:67,bf:10,nt:"FINAL FORM. Absolutely shredded.",ch:1,cr:"Best meal of your life. You earned it all."}];
+
+// ═══ CLASSES PER PHASE ═══
+const CLS={
+1:{active:false,note:"Phase 1: NO classes. Pure strength foundation with weights only. Classes would add too much fatigue on a deficit for the first 8 weeks."},
+2:{active:true,perWeek:1,opts:["Les Mills Sprint","BODYCOMBAT"],note:"Pick whichever is available that week. Do it on your conditioning day (Saturday). Sprint = 30min HIIT cycling (best for fat burn). BODYCOMBAT = 60min martial arts cardio (500-700 cal)."},
+3:{active:true,perWeek:2,opts:["Les Mills Sprint","BODYCOMBAT","Hyrox Engine"],note:"1-2 classes/week for maximum conditioning. Sprint + BODYCOMBAT or Hyrox Engine. Skip: BODYPUMP (you already lift heavy), BODYJAM, Ceremony. BODYATTACK can replace BODYCOMBAT if preferred."}
+};
+
+// ═══ RUNNING ═══
+const RN=[{wk:[1,2],t:"Base Building",p:"2x: 3km easy (22 min), 1x 5km steady (35 min), 1x 4km easy",tg:"5km/35m",nt:"You do 5K in 35min — now build consistency and easy volume"},{wk:[3,4],t:"5K Improve",p:"2x: 4km easy, 1x 5km push pace (aim 32min), 1x 5x400m intervals",tg:"5km/32m",nt:"Push pace = slightly faster than comfortable. Intervals: 400m fast, walk 200m"},{wk:[5,6],t:"5K Speed",p:"2x: 4km easy, 1x 5km tempo (aim 30min), 1x 6x400m",tg:"5km/30m",nt:"Tempo = you can only say short phrases"},{wk:[7,8],t:"Build to 6K",p:"2x: 4km easy, 1x 6km long (40min), 1x 5km tempo",tg:"6km/40m",nt:"Long run Sat — easy pace, just cover the distance"},{wk:[9,10],t:"Build to 7K",p:"1x: 5km easy, 1x 7km long (46min), 1x 5km tempo, 1x hill repeats 6x",tg:"7km/46m",nt:"Hills: run hard uphill 1 min, jog down, repeat 6x"},{wk:[11,12],t:"Build to 8K",p:"1x: 5km easy, 1x 8km long (52min), 1x 5km tempo, 1x intervals",tg:"8km/52m",nt:"Distance building — slow the long runs"},{wk:[13,14],t:"8K Strong",p:"1x: 6km easy, 1x 8km steady (48min), 1x 6km tempo, 1x hills",tg:"8km/48m",nt:"Legs should feel powerful now"},{wk:[15,16],t:"First 9K",p:"1x: 5km easy, 1x 9km long (56min), 1x 6km tempo",tg:"9km/56m",nt:"Carry water on long runs"},{wk:[17,18],t:"First 10K",p:"1x: 5km easy, 1x 10km slow (65min), 1x 7km tempo",tg:"10km done",nt:"Just finish — time doesn't matter yet"},{wk:[19,20],t:"10K Endurance",p:"1x: 10km steady, 1x 7km tempo, 1x 5km intervals",tg:"10km/60m",nt:"Now push the 10K pace"},{wk:[21,22],t:"10K Speed",p:"1x: 10km race pace, 1x 8km tempo, 1x interval session",tg:"10km/57m",nt:"You're a runner. Own it."},{wk:[23,24],t:"Race Ready",p:"1x: 10km all-out, 1x 5km easy, taper last week",tg:"<55min",nt:"Leave everything on the road"}];
+function getRn(w){return RN.find(r=>w>=r.wk[0]&&w<=r.wk[1])||RN[0]}
+
+// ═══ SHOPPING ═══
+const SHOP={
+always:{n:"🔄 EVERY WEEK (all 24 weeks)",items:[
+["Chicken breast","1.5kg"],["Eggs","30"],["Greek yogurt 0%","1kg"],["Basmati/jasmine rice","1kg"],["Oats","500g"],["Whole wheat bread","1 loaf"],["Broccoli","2 heads"],["Spinach","2 bags"],["Tomatoes","6"],["Cucumber","4"],["Bananas","8"],["Lemons","4"],["Olive oil","(keep stocked)"],["Green tea","(keep stocked)"],["Almond milk","1L"],["Rice cakes","2 packs"]]},
+ph1:{n:"📦 PHASE 1 EXTRAS (Wk 1-8)",note:"Building phase — slightly more carbs, more variety to keep you engaged",items:[
+["Chicken thighs","500g"],["Lean beef mince","500g"],["Canned tuna","4 cans"],["Cottage cheese","400g"],["Brown rice","500g"],["Granola (low sugar)","400g"],["Quinoa","400g"],["Couscous","400g"],["Bell peppers","4"],["Carrots","500g"],["Avocado","2"],["Apples","5"],["Frozen berries","500g"],["Dates","200g"],["Peanut butter","400g"],["Almonds","200g"],["Chia seeds","150g"],["Honey","250g"]]},
+ph2:{n:"📦 PHASE 2 EXTRAS (Wk 9-16)",note:"Shred phase — tighter carbs, more lean protein, add feta for flavor without calories",items:[
+["Turkey mince","500g"],["Smoked turkey slices","200g"],["White fish (tilapia)","400g"],["Shrimp","300g"],["Feta cheese","200g"],["Whole wheat pasta","500g"],["Green beans","300g"],["Celery","1 bunch"],["Mixed salad bags","2"],["Beef jerky","2 packs"],["Walnuts","100g"],["Hummus / tahini","300g"],["Canned tomatoes","3"],["Stock cubes","1 box"],["Soy sauce","(keep stocked)"]]},
+ph3:{n:"📦 PHASE 3 EXTRAS (Wk 17-24)",note:"Peak shred — minimal carbs, max protein, simple meals, electrolytes critical",items:[
+["Salmon fillets","400g (1x/week treat)"],["Steak","300g (1x/week)"],["Laban","500ml (fasting)"],["Electrolyte powder","30 servings"],["Sparkling water","6-pack"],["Chamomile tea","1 box"]]},
+supps:{n:"💊 SUPPLEMENTS (monthly restock)",items:[
+["Whey isolate","2.2kg tub"],["Creatine monohydrate","500g"],["Multivitamin (yours has zinc+mag+D)","60 tabs"],["Fish oil capsules","90 caps"],["Vitamin D3 10,000 IU","90 caps"],["Magnesium glycinate 400mg","60 caps"]],note:"Already owned (don't rebuy): Laperva Super Burner Extra (pre-workout), CLA Keto Cut (Phase 1 only)"},
+};
+
+const AVOID=[
+{n:"Fruit juices, sodas, energy drinks",w:"200-400 empty liquid calories"},
+{n:"Sugary coffee drinks (frappe, mocha)",w:"Single frappe = 500+ cal of sugar"},
+{n:"Deep fried food",w:"Hidden oil adds 300+ cal + inflammation"},
+{n:"Sweets, pastries, kunafa, baklava",w:"Insulin spike → crash → stored as fat"},
+{n:"Processed meats (hot dogs, sausages)",w:"Bad fats, high sodium, low protein quality"},
+{n:"Alcohol — all types",w:"Kills protein synthesis 72h, empty calories"},
+{n:"Flavored yogurts & most granola bars",w:"\"Healthy\" but loaded with sugar"},
+{n:"Restaurant sauces (mayo, cheese, cream)",w:"Hidden 300-500 cal per serving"},
+{n:"White bread, croissants, pastries",w:"Empty carbs, no fiber, blood sugar spike"},
+{n:"Margarine & vegetable/seed oils",w:"Inflammatory — use olive oil only"}];
+
+// ═══ MEALS — Phase-specific with Arabic dishes ═══
+const ML={
+// ─── BREAKFAST ───
+b1:[ // Phase 1 breakfast (more carbs)
+{f:"3 eggs scrambled + 60g oats with berries, green tea",k:410,p:28,c:42,a:16,r:"Scramble 3 eggs with salt+pepper. Oats: 60g + 160ml water, microwave 2 min. Top with berries."},
+{f:"Almond milk oats: 200ml almond milk + 50g oats + whey + chia + banana",k:400,p:34,c:44,a:10,r:"Heat almond milk. Stir in oats, cook 3 min. Mix in whey + chia. Top with banana."},
+{f:"Ful medames: 150g fava beans + olive oil + lemon + 2 boiled eggs + bread",k:420,p:28,c:38,a:18,r:"Warm canned ful in pan. Mash slightly. Top with 1 tsp olive oil, lemon, cumin. Serve with 2 boiled eggs + 1 small bread."},
+{f:"Labneh toast: 3 tbsp labneh + 2 slices toast + cucumber + tomato + olive oil drizzle",k:380,p:18,c:36,a:18,r:"Spread labneh on toast. Top with sliced cucumber, tomato, pinch of za'atar, drizzle olive oil."},
+{f:"Protein pancakes: whey + 1 egg + 50g oats, pan-fry, green tea",k:390,p:34,c:40,a:10,r:"Blend whey+egg+oats+splash water. Non-stick pan, 2 min each side. 3-4 small pancakes."},
+{f:"Overnight oats: 50g oats + 200ml almond milk + whey + chia seeds",k:380,p:32,c:38,a:10,r:"Mix in jar night before. Refrigerate. Eat cold."},
+{f:"2 eggs + 2 whites + cheese + toast + green tea",k:360,p:30,c:22,a:16,r:"Scramble eggs. Toast bread. Add cheese on top."},
+{f:"Shakshuka: 3 eggs in tomato sauce + feta + 1 bread",k:430,p:30,c:32,a:20,r:"200g canned tomato in pan, add cumin+paprika+salt. Simmer 3 min. Crack 3 eggs in. Cover 5-7 min. Crumble feta on top."}],
+b2:[ // Phase 2 breakfast (tighter)
+{f:"3 egg whites + 1 whole egg scrambled + 50g oats, green tea",k:340,p:26,c:34,a:10,r:"Separate whites. Scramble all together. Cook 50g oats with water."},
+{f:"Greek yogurt (150g) + 25g granola + banana slices",k:340,p:26,c:42,a:6,r:"Yogurt in bowl. Top with granola + banana."},
+{f:"Labneh (2 tbsp) + 1 slice toast + cucumber + 2 boiled egg whites",k:280,p:22,c:20,a:10,r:"Spread labneh on toast. Add cucumber. Boil eggs, use whites only."},
+{f:"Almond milk smoothie: 200ml almond milk + whey + ½ banana + ice",k:300,p:30,c:28,a:6,r:"Blend all with ice until smooth."},
+{f:"2 eggs + spinach + 1 slice toast",k:310,p:22,c:18,a:16,r:"Scramble eggs with handful spinach. Serve with toast."},
+{f:"50g oats + whey + chia + almond milk (cold overnight)",k:350,p:32,c:36,a:8,r:"Mix night before in jar. Eat cold."}],
+b3:[ // Phase 3 breakfast (strict)
+{f:"4 egg whites + 1 egg + green tea",k:210,p:24,c:2,a:8,r:"Scramble whites + 1 whole egg with salt."},
+{f:"Greek yogurt (120g) + 15g granola + 5 almonds",k:230,p:18,c:18,a:8,r:"Yogurt + granola + almonds."},
+{f:"Whey shake: 1 scoop + 200ml almond milk + ice",k:200,p:28,c:10,a:4,r:"Blend whey + almond milk + ice."},
+{f:"2 boiled eggs + cucumber + 1 rice cake",k:220,p:16,c:10,a:12,r:"Boil eggs 10 min. Slice cucumber."},
+{f:"Labneh (2 tbsp) + cucumber sticks + celery",k:180,p:10,c:8,a:12,r:"Dip veggies in labneh."}],
+// ─── SNACK ───
+s1:[
+{f:"Apple + 15g almonds",k:170,p:5,c:22,a:9,r:"Wash apple. Count almonds. Eat."},
+{f:"1 rice cake + 1 tbsp PB",k:140,p:5,c:14,a:8,r:"Spread PB on rice cake."},
+{f:"Protein bar",k:200,p:20,c:20,a:8,r:"Unwrap. Eat."},
+{f:"Boiled egg + banana",k:160,p:8,c:22,a:5,r:"Boil egg. Eat with banana."},
+{f:"100g Greek yogurt + berries",k:120,p:12,c:12,a:2,r:"Yogurt + berries."},
+{f:"Hummus (40g) + carrot + cucumber sticks",k:130,p:4,c:12,a:8,r:"Cut veggies into sticks. Dip."},
+{f:"Dates (3) + 10g almonds",k:140,p:3,c:26,a:5,r:"Eat dates + almonds."}],
+// ─── LUNCH ───
+l1:[ // Phase 1 lunch (more variety, Arabic)
+{f:"Chicken kabsa: 180g chicken + 120g spiced rice + salad",k:460,p:42,c:42,a:12,r:"Season chicken with kabsa spice (cumin, coriander, cinnamon, cardamom, black lime). Pan-fry 6 min/side. Cook 120g rice with 1 tsp tomato paste + same spices + salt."},
+{f:"180g chicken + 120g rice + big salad + lemon",k:440,p:42,c:40,a:10,r:"Season chicken with salt+pepper+paprika. Grill 6 min/side. Cook rice. Chop salad, squeeze lemon."},
+{f:"Chicken shawarma bowl: 180g chicken + 100g rice + pickles + garlic yogurt",k:450,p:40,c:38,a:14,r:"Slice chicken thin. Marinate in yogurt+cumin+paprika+turmeric 15 min. Pan-fry 5 min. Sauce: 2 tbsp yogurt+garlic+lemon."},
+{f:"Machboos: 180g chicken + 120g spiced rice (baharat) + tomato + onion",k:460,p:40,c:44,a:12,r:"Brown chicken. Set aside. Fry onion+tomato+baharat spice. Add rice + water. Place chicken on top. Cover, cook 20 min."},
+{f:"Grilled chicken + tabbouleh + 2 tbsp hummus",k:420,p:38,c:30,a:16,r:"Grill 180g chicken. Tabbouleh: chop parsley+tomato+onion+mint, mix with squeeze lemon. Serve with hummus."},
+{f:"2 cans tuna + 120g couscous + salad + olive oil",k:430,p:46,c:38,a:8,r:"Pour 120g couscous in bowl, add equal boiling water, cover 5 min, fluff. Mix drained tuna + diced veg + olive oil."},
+{f:"180g turkey mince + 120g brown rice + steamed broccoli",k:440,p:42,c:40,a:10,r:"Brown mince 5 min. Season with salt+cumin. Cook rice. Steam broccoli 5 min."},
+{f:"3 egg omelette + feta + big salad + 1 bread",k:400,p:28,c:24,a:22,r:"Whisk 3 eggs. Pour in pan, add crumbled feta. Fold. Serve with salad+bread."}],
+l2:[ // Phase 2 lunch (leaner)
+{f:"180g grilled chicken + 100g rice + fattoush salad",k:410,p:40,c:36,a:10,r:"Grill chicken. Fattoush: chop lettuce+tomato+cucumber+radish, add sumac+lemon+1 tsp olive oil."},
+{f:"Chicken kofta: 180g chicken mince + spices + 100g rice + salad",k:420,p:40,c:36,a:12,r:"Mix mince with grated onion+parsley+cumin+salt. Shape into logs. Grill 4 min/side."},
+{f:"150g white fish (tilapia) + 120g rice + green beans",k:380,p:36,c:38,a:6,r:"Season fish. Pan-fry 3-4 min/side in 1 tsp oil. Boil green beans 5 min."},
+{f:"Tuna salad bowl: 2 cans tuna + mixed greens + cucumber + lemon + olive oil",k:350,p:44,c:10,a:14,r:"Drain tuna. Mix with greens, cucumber, lemon juice, 1 tsp olive oil."},
+{f:"Shish tawook bowl: 180g chicken + garlic sauce + salad (no rice)",k:380,p:42,c:12,a:16,r:"Cube chicken. Marinate in yogurt+garlic+lemon+paprika. Grill on skewers 4 min/side. Sauce: yogurt+garlic+lemon."},
+{f:"180g chicken + 100g couscous + grilled zucchini",k:400,p:40,c:34,a:10,r:"Grill chicken. Couscous: 100g + boiling water, cover 5 min. Slice zucchini, grill 3 min/side."}],
+l3:[ // Phase 3 lunch (very lean)
+{f:"180g chicken breast + huge green salad + lemon + 1 tsp olive oil",k:340,p:42,c:6,a:12,r:"Grill chicken. Big salad: lettuce+tomato+cucumber+onion. Lemon+olive oil dressing."},
+{f:"2 cans tuna + mixed greens + cucumber + lemon",k:280,p:44,c:6,a:6,r:"Drain tuna. Toss with greens+cucumber+lemon. No oil."},
+{f:"150g white fish + steamed broccoli + small salad",k:260,p:34,c:8,a:6,r:"Pan-fry fish 3 min/side. Steam broccoli. Salad on the side."},
+{f:"180g chicken + grilled peppers + 80g rice",k:360,p:40,c:30,a:8,r:"Grill chicken. Grill peppers. Tiny portion rice."},
+{f:"Shish tawook (180g) + fattoush (no bread) + pickles",k:320,p:40,c:8,a:12,r:"Grill chicken skewers. Fattoush without pita chips."}],
+// ─── PRE-WORKOUT ───
+pw:[
+{f:"1 banana + 1 scoop whey in water",k:200,p:26,c:26,a:1,r:"Shake whey. Eat banana."},
+{f:"2 rice cakes + 80g turkey slices",k:170,p:18,c:20,a:2,r:"Stack turkey on rice cakes."},
+{f:"3 dates + green tea",k:90,p:1,c:22,a:0,r:"Eat dates. Drink tea."},
+{f:"1 slice toast + 1 tsp honey",k:120,p:3,c:24,a:1,r:"Toast bread. Drizzle honey."},
+{f:"Small banana + 5 almonds",k:140,p:4,c:22,a:5,r:"Eat banana + almonds."}],
+// ─── DINNER ───
+d1:[ // Phase 1 dinner (Arabic, satisfying)
+{f:"Chicken kabsa: 150g chicken + 100g spiced rice + yogurt side",k:420,p:36,c:38,a:12,r:"Same kabsa method as lunch. Smaller portion. Serve with 2 tbsp plain yogurt."},
+{f:"Beef kofta (150g) + 100g rice + fattoush",k:420,p:34,c:38,a:14,r:"Mix mince+onion+parsley+cumin+cinnamon+salt. Shape into logs. Pan-fry 4 min/side. Serve with rice+fattoush."},
+{f:"150g chicken thigh + 100g rice + roasted zucchini",k:400,p:34,c:36,a:14,r:"Season thigh, pan-fry 6-7 min/side. Cook rice. Slice zucchini, roast 200°C 15 min."},
+{f:"Bamia stew: 150g chicken + okra in tomato sauce + 100g rice",k:410,p:34,c:40,a:12,r:"Brown chicken pieces. Add 150g okra + 200g canned tomato + garlic + coriander. Simmer 20 min. Serve with rice."},
+{f:"Shrimp stir-fry (150g) + 100g rice + spinach",k:370,p:34,c:34,a:8,r:"Hot pan, 1 tsp oil, garlic+ginger 30s. Add shrimp 2 min/side. Add spinach. Serve with rice."},
+{f:"Grilled chicken kebab (150g) + tabbouleh + hummus (2 tbsp)",k:400,p:36,c:28,a:16,r:"Cube chicken, season, grill on skewers 4 min/side. Tabbouleh: parsley+tomato+onion+lemon."},
+{f:"Turkey meatballs (150g) + 100g pasta + tomato sauce",k:430,p:38,c:40,a:10,r:"Mix turkey mince+egg+garlic+salt. Roll balls. Pan-fry 8 min. Simmer in canned tomato 5 min."},
+{f:"150g white fish + 120g roasted potato + green beans",k:380,p:34,c:36,a:8,r:"Season fish, pan-fry 3-4 min/side. Dice potato, roast 200°C 25 min. Boil beans 5 min."}],
+d2:[ // Phase 2 dinner (leaner)
+{f:"150g grilled chicken + big salad + 80g rice",k:360,p:38,c:28,a:10,r:"Grill chicken. Large salad with lemon. Small rice."},
+{f:"150g fish + steamed broccoli + 80g couscous",k:340,p:34,c:30,a:8,r:"Pan-fry fish. Steam broccoli. Couscous: 80g + boiling water."},
+{f:"Chicken shish tawook (150g) + grilled veggies + 2 tbsp hummus",k:360,p:36,c:14,a:16,r:"Grill chicken skewers. Grill peppers+zucchini. Serve with hummus."},
+{f:"150g lean beef mince + big salad + 1 small bread",k:380,p:36,c:20,a:16,r:"Brown mince. Season with cumin. Big salad. 1 piece bread."},
+{f:"150g shrimp + 80g rice + sautéed spinach",k:330,p:34,c:28,a:6,r:"Cook shrimp 2 min/side. Sautée spinach. Serve with rice."},
+{f:"Chicken kofta (150g) + fattoush (no bread) + yogurt",k:350,p:36,c:12,a:14,r:"Grill kofta. Fattoush without pita. 2 tbsp yogurt on side."}],
+d3:[ // Phase 3 dinner (very strict)
+{f:"150g chicken breast + huge salad + lemon",k:300,p:38,c:6,a:10,r:"Grill chicken. Massive salad. Lemon dressing only."},
+{f:"150g white fish + steamed green beans + cucumber",k:260,p:34,c:8,a:6,r:"Pan-fry fish. Steam beans. Slice cucumber."},
+{f:"2 eggs + 100g turkey mince + salad",k:320,p:32,c:4,a:18,r:"Brown mince. Fry or scramble 2 eggs on side. Big salad."},
+{f:"150g grilled shrimp + grilled zucchini + salad",k:270,p:32,c:6,a:8,r:"Grill shrimp + zucchini. Serve with salad."},
+{f:"Chicken shish tawook (150g) + cucumber + yogurt (2 tbsp)",k:300,p:38,c:6,a:12,r:"Grill skewers. Eat with cucumber + yogurt dip."}],
+// ─── EVENING ───
+e:[
+{f:"150g Greek yogurt + cinnamon",k:100,p:15,c:6,a:1,r:"Yogurt + cinnamon."},
+{f:"150g cottage cheese + 5 almonds",k:130,p:17,c:5,a:5,r:"Cottage cheese + almonds."},
+{f:"2 boiled eggs + cucumber",k:150,p:13,c:2,a:10,r:"Boil eggs 10 min. Slice cucumber."},
+{f:"Whey shake in water (if short on protein today)",k:120,p:25,c:3,a:1,r:"Shake and drink."},
+{f:"Labneh (2 tbsp) + cucumber sticks",k:100,p:6,c:4,a:8,r:"Dip cucumber in labneh."},
+{f:"Small handful walnuts (15g) + chamomile tea",k:100,p:3,c:2,a:10,r:"Eat walnuts. Brew tea."}],
+// ─── FASTING ───
+su:[
+{f:"3 eggs + 60g oats + banana + 15g almonds + 1.5L water",k:550,p:30,c:58,a:20,r:"Scramble eggs. Cook oats. Eat banana+almonds. Drink water slowly over 30 min."},
+{f:"Ful medames + 2 eggs + bread + labneh + 1.5L water",k:580,p:32,c:50,a:22,r:"Warm ful, top with olive oil. Boil eggs. Spread labneh on bread. Hydrate slowly."},
+{f:"Overnight oats (60g) + whey + chia + banana + PB + water",k:600,p:36,c:62,a:18,r:"Prep night before. Eat at suhoor. 1-1.5L water."},
+{f:"Yogurt (150g) + granola + dates + whey shake + water",k:560,p:38,c:58,a:12,r:"Yogurt+granola+dates. Shake whey separately. Hydrate."}],
+ift:[
+{f:"3 dates + water → chicken kabsa (180g chicken + 120g rice) + salad",k:620,p:44,c:62,a:14,r:"Break fast with dates+water. Wait 10 min. Then kabsa: spiced chicken + rice + salad."},
+{f:"3 dates + lentil soup → 150g fish + 120g potato + veg",k:580,p:38,c:56,a:16,r:"Dates+soup first. Soup: 80g red lentils+water+cumin, boil 15 min. Main: bake fish, roast potato."},
+{f:"3 dates + water → beef kofta + 100g rice + fattoush + hummus",k:640,p:38,c:60,a:18,r:"Dates+water. Kofta: mince+onion+spices, pan-fry. Rice+fattoush+2 tbsp hummus."},
+{f:"3 dates + soup → chicken shawarma bowl + rice + garlic yogurt",k:630,p:42,c:58,a:16,r:"Dates+soup. Then shawarma: marinated chicken+rice+pickles+yogurt-garlic sauce."}],
+is:[
+{f:"Whey shake + banana — 1hr after iftar",k:220,p:28,c:26,a:2,r:"Blend whey+banana+water. Drink 1hr after iftar."},
+{f:"1 rice cake + PB + almond milk",k:200,p:8,c:18,a:10,r:"Spread PB on rice cake. Glass of almond milk."},
+{f:"100g yogurt + 1 tsp honey",k:120,p:12,c:12,a:1,r:"Yogurt+honey."},
+{f:"Labneh (2 tbsp) + cucumber + chamomile tea",k:110,p:6,c:4,a:8,r:"Dip cucumber in labneh. Brew tea."}]
+};
+
+// ═══ SUPPLEMENTS — updated with Laperva products ═══
+const SP=[
+{n:"Multivitamin",d:"1 serving",w:"Immediately after breakfast",nt:"Contains: Zinc 15mg, Vit C 500mg, Mag 100mg, D3 400IU, all B vitamins. No separate zinc or C needed.",c:1,cy:"NO CYCLING"},
+{n:"Fish Oil (Omega-3)",d:"2-3g EPA/DHA",w:"After lunch (with D3)",nt:"Fat-soluble — absorbs best after your fattiest meal. Paired with D3 for convenience.",c:1,cy:"NO CYCLING"},
+{n:"Vitamin D3 10,000 IU",d:"1 cap every other day (Ph1) / every 3rd day (Ph2+)",w:"After lunch (with Fish Oil)",nt:"Paired with fish oil + lunch fat = maximum absorption. Multi adds 400IU on off-days. Blood test at week 8.",c:1,cy:"Every 2nd day Phase 1 → every 3rd day Phase 2-3"},
+{n:"Laperva CLA Keto Cut",d:"3 caps (1700mg)",w:"After lunch (Phase 1 ONLY)",nt:"Contains 90mg caffeine. Take with lunch fat for CLA absorption. STOP after week 8. Don't rebuy.",c:1,ph1only:true,cy:"PHASE 1 ONLY (weeks 1-8) then stop"},
+{n:"Laperva Super Burner Extra",d:"2 caps",w:"3:30 PM pre-gym (gym days only)",nt:"~115mg caffeine = your pre-workout. 30 min before training with banana/dates. Skip rest days.",c:1,cy:"CYCLE: 6 weeks ON → 1 week OFF. Gym days only."},
+{n:"Creatine Monohydrate",d:"5g",w:"Post-workout with dinner",nt:"Mix in water. Take with rice/carbs — insulin helps absorption. On rest days: with dinner.",c:1,cy:"NO CYCLING — daily forever"},
+{n:"Whey Protein Isolate",d:"1 scoop (25g)",w:"Post-workout or anytime if short on protein",nt:"Only if you haven't hit ~175g protein from food. It's just food.",c:1,cy:"AS NEEDED"},
+{n:"Magnesium Glycinate",d:"400mg",w:"9:30 PM — alone before sleep",nt:"No other minerals at this time = zero competition = full absorption. Triggers deep sleep. Your multi adds 100mg earlier = 500mg total (perfect).",c:1,cy:"NO CYCLING"}];
+
+// ═══ STATE ═══
+let S={week:1,tab:'workout',day:0,exp:null,fasting:false,mi:{}};
+let LOG=[];
+try{Object.assign(S,JSON.parse(localStorage.getItem('x11s')||'{}'));if(S.tab==='supps'||S.tab==='run')S.tab='workout';if(!S.mi)S.mi={}}catch(e){}
+try{LOG=JSON.parse(localStorage.getItem('x11l')||'[]')}catch(e){}
+function save(){try{localStorage.setItem('x11s',JSON.stringify({week:S.week,fasting:S.fasting,mi:S.mi}));localStorage.setItem('x11l',JSON.stringify(LOG))}catch(e){}}
+
+function rng(s){return()=>{s=(s*16807)%2147483647;return(s-1)/2147483646}}
+function shuf(a,r){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function pk(a,n,r){return shuf(a,r).slice(0,n)}
+function gph(w){return w<=8?1:w<=16?2:3}
+function gpw(w){return w<=8?w:w<=16?w-8:w-16}
+const PC={1:{p:"#00FF87",bg:"#070f0b",c:"#0d1f16"},2:{p:"#FF6B35",bg:"#140b07",c:"#1f1510"},3:{p:"#FF2D55",bg:"#14070c",c:"#1f0d15"}};
+const DAYS=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+
+// ═══ EXERCISE DB ═══
+const X={
+cc:[{n:"Flat Bench Press",y:"rT7DgCr-3pg",m:"Chest, Tri"},{n:"Incline DB Press",y:"8iPEnn-ltC8",m:"Upper Chest"},{n:"Incline Barbell",y:"SrqOu55lrYU",m:"Upper Chest"},{n:"Decline Bench",y:"LfyQBUKR8SE",m:"Lower Chest"},{n:"DB Flat Press",y:"VmB1G1K7v94",m:"Chest"},{n:"Machine Press",y:"NwzUje3z0qY",m:"Chest"}],
+ci:[{n:"Cable Flyes",y:"Iwe6AmxVf7o",m:"Chest"},{n:"Low-High Fly",y:"Snvta3MbNBc",m:"Upper Chest"},{n:"High-Low Fly",y:"Iwe6AmxVf7o",m:"Lower Chest"},{n:"Pec Deck",y:"Z57CtFmRMxA",m:"Chest"},{n:"DB Flyes",y:"eozdVDA78K0",m:"Chest"}],
+sp:[{n:"Seated DB OHP",y:"qEwKCR5JCog",m:"Delts"},{n:"Barbell OHP",y:"2yjwXTZQDDI",m:"Delts"},{n:"Arnold Press",y:"6Z15_WdXmVw",m:"Delts"},{n:"Machine Press",y:"Wqq43dKoG2s",m:"Delts"}],
+sl:[{n:"DB Lateral Raise",y:"3VcKaXpzqRo",m:"Side Delts"},{n:"Cable Laterals",y:"PPrzBWZDOhA",m:"Side Delts"},{n:"Machine Laterals",y:"dpAAhb_MBOc",m:"Side Delts"},{n:"Leaning Laterals",y:"H6IBKpBNyKI",m:"Side Delts"}],
+sr:[{n:"Face Pulls",y:"rep-qVOkqgk",m:"Rear Delts"},{n:"Reverse Pec Deck",y:"5YK4bgzXDp0",m:"Rear Delts"},{n:"Bent Rear Fly",y:"EA7u4Q_8HQ0",m:"Rear Delts"}],
+tr:[{n:"Rope Pushdown",y:"vB5OHsJ3EME",m:"Triceps"},{n:"Overhead Ext",y:"k3S3rVGMuCo",m:"Tri Long Head"},{n:"Skull Crushers",y:"d_KZxkY_0cM",m:"Triceps"},{n:"Close-Grip Bench",y:"nEF0bv2FW94",m:"Tri, Chest"},{n:"Dips",y:"wjUmnZH528Y",m:"Tri, Chest"},{n:"V-Bar Pushdown",y:"nzgSJ9Kd9mQ",m:"Triceps"}],
+bv:[{n:"Pull-Ups",y:"eGo4IYlbE5g",m:"Lats, Bi"},{n:"Wide Pulldown",y:"CAwf7n6Luuc",m:"Lats"},{n:"Close Pulldown",y:"an1BMInTXLk",m:"Lats"},{n:"Neutral Pulldown",y:"jGapUMPH2gg",m:"Lats"}],
+bh:[{n:"Barbell Row",y:"FWJR5Ve8bnQ",m:"Back"},{n:"Cable Row",y:"GZbfZ033f74",m:"Back"},{n:"1-Arm DB Row",y:"pYcpY20QaE8",m:"Lats"},{n:"T-Bar Row",y:"j3Igk5nyZE4",m:"Back"},{n:"Chest-Sup Row",y:"H75im3p3ZkE",m:"Upper Back"},{n:"Pendlay Row",y:"T3N-TO4reLQ",m:"Back"}],
+bi:[{n:"Straight-Arm PD",y:"lueEJGjTuPQ",m:"Lats"},{n:"Cable Pullover",y:"AjCKnMf5YCU",m:"Lats"},{n:"Hyperextensions",y:"ph3pddpKzzA",m:"Low Back"}],
+bc:[{n:"Barbell Curls",y:"kwG2ipFRgFo",m:"Biceps"},{n:"DB Curls",y:"ykJmrZ5v0Oo",m:"Biceps"},{n:"Hammer Curls",y:"zC3nLlEvin4",m:"Brachialis"},{n:"Incline Curls",y:"soxrZlIl35U",m:"Biceps"},{n:"Preacher Curls",y:"fIWP-FRFNU0",m:"Biceps"},{n:"Cable Curls",y:"NFzpj38GC_M",m:"Biceps"},{n:"Spider Curls",y:"mOBp4VzSsTo",m:"Biceps"}],
+qc:[{n:"Barbell Squat",y:"bEv6CCg2BC8",m:"Quads"},{n:"Leg Press",y:"IZxyjW7MPJQ",m:"Quads"},{n:"Hack Squat",y:"0tn5K9NlCfo",m:"Quads"},{n:"Front Squat",y:"m4ytaCJZpl0",m:"Quads"},{n:"Bulgarian Split",y:"2C-uNgKwPLE",m:"Quads"},{n:"Goblet Squat",y:"MeIiIdhvXT4",m:"Quads"}],
+qi:[{n:"Leg Extensions",y:"YyvSfVjQeL0",m:"Quads"},{n:"Walking Lunges",y:"L8fvypPHRoA",m:"Quads"},{n:"Sissy Squat",y:"5MFqMXGUKok",m:"Quads"},{n:"Step-Ups",y:"dQqApCGd5Ag",m:"Quads"}],
+hm:[{n:"Romanian DL",y:"7j-2w4-P14I",m:"Hams"},{n:"Lying Leg Curl",y:"1Tq3QdYUuHs",m:"Hams"},{n:"Seated Leg Curl",y:"F488k7-FEzs",m:"Hams"},{n:"Stiff-Leg DL",y:"CN_7cz3P-1U",m:"Hams"},{n:"Nordic Curl",y:"jI9NxMOxyHc",m:"Hams"},{n:"1-Leg RDL",y:"N4tIcDOYOHI",m:"Hams"}],
+gl:[{n:"Hip Thrust",y:"xDmFkJxPzeM",m:"Glutes"},{n:"Cable Kickback",y:"JXARNN7KKYE",m:"Glutes"},{n:"Glute Bridge",y:"OUgsJ8-Vi0E",m:"Glutes"},{n:"Sumo DL",y:"tfYGqd3DRSE",m:"Glutes"}],
+cv:[{n:"Standing Calf",y:"gwLzBJYoWlI",m:"Calves"},{n:"Seated Calf",y:"JbyjNymZOt0",m:"Calves"},{n:"LP Calf Raise",y:"KTzVN51pMRs",m:"Calves"}],
+ab:[{n:"Hanging Leg Raise",y:"Pr1ieGZ5u4E",m:"Abs"},{n:"Cable Crunches",y:"AV5PmrJqMsI",m:"Abs"},{n:"Ab Rollout",y:"rqiTPmGCBRs",m:"Core"},{n:"Pallof Press",y:"AH_QZLm_0-s",m:"Core"},{n:"Plank",y:"ASdvN_XEl_c",m:"Core"},{n:"Bicycle Crunch",y:"9FGilxCbdz8",m:"Obliques"},{n:"Dead Bug",y:"4XLEnwUr1d8",m:"Core"},{n:"Mt Climbers",y:"nmwgirgXLYM",m:"Core"}]};
+
+const RP={
+1:[ // FOUNDATION: Heavy, low reps, long rest — build raw strength
+{s:4,r:"6-8",x:"120s",l:"Heavy Strength"},{s:4,r:"8-10",x:"90s",l:"Hypertrophy"},{s:3,r:"10-12",x:"90s",l:"Moderate"},{s:5,r:"5-6",x:"150s",l:"Power"}],
+2:[ // SHRED: Medium weight, higher reps, shorter rest, supersets kick in
+{s:4,r:"10-12",x:"60s",l:"High Volume"},{s:3,r:"12-15",x:"45s",l:"Pump"},{s:4,r:"8-10",x:"75s",l:"Controlled"},{s:5,r:"6-8",x:"90s",l:"Heavy"},{s:3,r:"15-20",x:"30s",l:"Burnout"}],
+3:[ // PEAK: Light weight, max reps, minimal rest, drop sets, giant sets
+{s:4,r:"15-20",x:"30s",l:"Shred",nt:"Squeeze every rep"},{s:3,r:"20-25",x:"20s",l:"Extreme Pump"},{s:5,r:"12-15",x:"45s",l:"Volume"},{s:4,r:"10-12",x:"30s",l:"Drop Set",nt:"Drop weight 20% last 2 sets"},{s:3,r:"25-30",x:"20s",l:"Finisher"}]};
+
+const MAINT={cal:2400,p:160,c:260,f:68,
+train:"4 days/week (Push, Pull, Legs, Upper)",
+cardio:"Run 3x/week (keep 10K), daily walks",
+rules:["Calories at maintenance (~2500)","Protein stays 2g/kg = 165g","Keep lifting but volume -20%","Run for fun, not obligation","1-2 cheat meals per week is fine","Weigh weekly — if +2kg, mini-cut 2 weeks","Sleep & water stay non-negotiable","Keep creatine, multi, fish oil, D3, magnesium","Re-assess every 3 months","Enjoy the body you built"]};
+
+// ═══ WORKOUT GENERATOR ═══
+function genWeek(wk){
+const p=gph(wk),r=rng(wk*7919+42),sc=RP[p],ps=()=>sc[Math.floor(r()*sc.length)],mk=(e,o)=>({...e,...(o||ps())}),f=S.fasting;
+
+// Phase 1: 6-7 exercises, heavy, basic
+// Phase 2: 7-8 exercises, supersets start, finishers
+// Phase 3: 8-9 exercises, drop sets, giant sets, burnouts
+const c1=pk(X.cc,2,r),c2=pk(X.ci,p>=2?2:1,r),s1=pk(X.sp,1,r),s2=pk(X.sl,1,r),s3=pk(X.sr,1,r),t1=pk(X.tr,2,r);
+let pushEx;
+if(f){pushEx=[mk(c1[0],{s:3,r:"10-12",x:"60s",l:"Fasting",nt:"Lighter today"}),mk(c2[0],{s:3,r:"12-15",x:"45s",l:"Light"}),mk(s1[0],{s:3,r:"10-12",x:"60s",l:"Light"}),mk(s2[0],{s:3,r:"12-15",x:"45s",l:"Light"}),mk(t1[0],{s:3,r:"12-15",x:"45s",l:"Light"})];}
+else if(p===1){pushEx=[mk(c1[0],{s:4,r:"6-8",x:"120s",l:"Heavy",nt:"2 warm-up sets. Go heavy."}),mk(c1[1],{s:4,r:"8-10",x:"90s",l:"Hypertrophy"}),mk(c2[0],{s:3,r:"10-12",x:"75s",l:"Stretch"}),mk(s1[0],{s:4,r:"6-8",x:"120s",l:"Heavy Press"}),mk(s2[0],{s:3,r:"10-12",x:"60s",l:"Controlled"}),mk(t1[0],{s:3,r:"8-10",x:"75s",l:"Strength"})];}
+else if(p===2){pushEx=[mk(c1[0],{s:4,r:"8-10",x:"75s",l:"Strength",nt:"Warm up, then push hard"}),mk(c1[1],{s:4,r:"10-12",x:"60s",l:"Volume"}),mk(c2[0],{s:3,r:"12-15",x:"45s",l:"Pump"}),mk(s1[0],{s:4,r:"8-10",x:"75s",l:"Controlled"}),mk(s2[0],{s:4,r:"12-15",x:"45s",l:"Mind-Muscle"}),mk(s3[0],{s:3,r:"12-15",x:"45s",l:"Rear Delt"}),mk(t1[0],{s:3,r:"12-15",x:"45s",l:"Superset w/ next",nt:"Superset with next exercise"}),mk(t1[1],{s:3,r:"12-15",x:"60s",l:"Superset pair"})];}
+else{pushEx=[mk(c1[0],{s:4,r:"12-15",x:"45s",l:"Volume",nt:"Moderate weight, max squeeze"}),mk(c1[1],{s:4,r:"15-20",x:"30s",l:"Pump",nt:"Drop set final set -20%"}),mk(c2[0],{s:3,r:"20-25",x:"20s",l:"Extreme Pump"}),mk(c2[1],{s:3,r:"15-20",x:"30s",l:"Burnout"}),mk(s1[0],{s:4,r:"12-15",x:"45s",l:"Controlled"}),mk(s2[0],{s:4,r:"20-25",x:"20s",l:"Crazy Pump",nt:"Light weight, chase the burn"}),mk(s3[0],{s:3,r:"15-20",x:"30s",l:"Rear Focus"}),mk(t1[0],{s:3,r:"15-20",x:"20s",l:"Giant Set A",nt:"Giant set: do all 3 back-to-back"}),mk(t1[1],{s:3,r:"15-20",x:"60s",l:"Giant Set B"})];}
+const push={nm:"PUSH",sb:p===1?"Strength Focus":p===2?"Volume & Supersets":"Peak Shred Intensity",ic:"💪",ex:pushEx,
+fn:p===1?"":p===2?"Burnout: 3×15 push-ups + 3×15 lateral raises, 30s rest":"Giant set: 15 push-ups → 15 lateral raises → 15 tricep dips × 4 rounds, NO rest between",
+cd:f?"Skip cardio":p===1?"AFTER GYM (pick one): 🚶 20 min incline walk (12%, 5.5km/h) · 🏃 20 min stairmaster · 🚴 20 min stationary bike":p===2?"AFTER GYM (pick one): 🚶 25 min incline walk (12%, 6km/h) · 🏃 25 min stairmaster · ⚡ 20 min HIIT treadmill (30s sprint / 30s walk)":"AFTER GYM (pick one): ⚡ 25 min HIIT treadmill (30s sprint / 30s walk) · 🏃 25 min stairmaster intervals · 🚴 25 min cycling HIIT"};
+
+const b1=pk(X.bv,1,r),b2=pk(X.bh,p>=3?3:2,r),b3=pk(X.bi,1,r),b4=pk(X.bc,2,r),s4=pk(X.sr,1,r);
+let pullEx;
+if(f){pullEx=[mk(b1[0],{s:3,r:"10-12",x:"60s",l:"Fasting"}),mk(b2[0],{s:3,r:"10-12",x:"60s",l:"Light"}),mk(b3[0],{s:3,r:"12-15",x:"45s",l:"Light"}),mk(s4[0],{s:3,r:"12-15",x:"45s",l:"Light"}),mk(b4[0],{s:3,r:"12-15",x:"45s",l:"Light"})];}
+else if(p===1){pullEx=[mk(b1[0],{s:4,r:"6-8",x:"120s",l:"Heavy",nt:"Full ROM, controlled negative"}),mk(b2[0],{s:4,r:"8-10",x:"90s",l:"Strength"}),mk(b2[1],{s:3,r:"10-12",x:"75s",l:"Volume"}),mk(s4[0],{s:3,r:"10-12",x:"60s",l:"Rear Delt"}),mk(b4[0],{s:3,r:"8-10",x:"75s",l:"Strength"}),mk(b4[1],{s:3,r:"10-12",x:"60s",l:"Controlled"})];}
+else if(p===2){pullEx=[mk(b1[0],{s:4,r:"8-10",x:"75s",l:"Strength",nt:"Add weight weekly"}),mk(b2[0],{s:4,r:"10-12",x:"60s",l:"Volume"}),mk(b2[1],{s:3,r:"12-15",x:"45s",l:"Pump"}),mk(b3[0],{s:3,r:"12-15",x:"45s",l:"Isolation"}),mk(s4[0],{s:4,r:"12-15",x:"45s",l:"Squeeze & Hold"}),mk(b4[0],{s:3,r:"12-15",x:"30s",l:"SS w/ next",nt:"Superset pair"}),mk(b4[1],{s:3,r:"12-15",x:"60s",l:"SS pair"})];}
+else{pullEx=[mk(b1[0],{s:4,r:"12-15",x:"45s",l:"Volume",nt:"Squeeze at the top"}),mk(b2[0],{s:4,r:"15-20",x:"30s",l:"Pump"}),mk(b2[1],{s:3,r:"15-20",x:"30s",l:"Burnout"}),mk(b2[2],{s:3,r:"20-25",x:"20s",l:"Drop Set",nt:"Drop weight each set"}),mk(b3[0],{s:3,r:"20-25",x:"20s",l:"Extreme"}),mk(s4[0],{s:4,r:"20-25",x:"20s",l:"Rear Pump"}),mk(b4[0],{s:3,r:"15-20",x:"20s",l:"Giant Set",nt:"Back-to-back with next"}),mk(b4[1],{s:3,r:"20-25",x:"60s",l:"Giant Set end"})];}
+const pull={nm:"PULL",sb:p===1?"Strength Focus":p===2?"Volume & Supersets":"Peak Shred Intensity",ic:"🏋️",ex:pullEx,
+fn:p===1?"":p===2?"3 sets max pull-ups + 21s curl (7-7-7)":"Mechanical drop set: wide pulldown → close grip → underhand × 12 reps each, 4 rounds",
+cd:f?"":"AFTER GYM (pick one): 🚶 "+[,"20 min stairmaster · 🚴 20 min cycling · 🏃 20 min incline walk","25 min stairmaster · 🚴 25 min rowing · ⚡ 20 min HIIT","25 min HIIT rowing (30s hard / 30s easy) · 🏃 25 min stairmaster intervals · 🚴 25 min cycling HIIT"][p],
+am:f?"":"🌅 OPTIONAL AM: Easy 3km jog BEFORE gym (wake 30 min early) — outdoor or treadmill"};
+
+const rest={nm:"RECOVERY + RUN",sb:"Easy Run · Stretch · Foam Roll",ic:"🏃",
+at_type:"recovery",
+rp:getRn(wk),
+at:["Full body stretching 15-20 min","Foam rolling all major groups","Optional: light swimming or yoga"],
+runNote:S.fasting?"☪ Fasting: run AFTER iftar. Easy pace, shorter distance.":""};
+
+const q1=pk(X.qc,2,r),q2=pk(X.qi,1,r),h1=pk(X.hm,2,r),g1=pk(X.gl,1,r),c3=pk(X.cv,1,r),a1=pk(X.ab,p>=3?4:3,r);
+let legEx;
+if(f){legEx=[mk(q1[0],{s:3,r:"10-12",x:"60s",l:"Fasting",nt:"Light, focus form"}),mk(q2[0],{s:3,r:"12-15",x:"45s",l:"Light"}),mk(h1[0],{s:3,r:"10-12",x:"60s",l:"Light"}),mk(g1[0],{s:3,r:"12-15",x:"45s",l:"Light"}),mk(a1[0],{s:3,r:"12-15",x:"45s",l:"Core"}),mk(a1[1],{s:3,r:"12-15",x:"45s",l:"Core"})];}
+else if(p===1){legEx=[mk(q1[0],{s:5,r:"5-6",x:"150s",l:"Power",nt:"2 warm-up sets. HEAVY."}),mk(q1[1],{s:4,r:"8-10",x:"90s",l:"Hypertrophy"}),mk(h1[0],{s:4,r:"8-10",x:"90s",l:"Strength"}),mk(h1[1],{s:3,r:"10-12",x:"75s",l:"Volume"}),mk(g1[0],{s:3,r:"10-12",x:"75s",l:"Glute Focus"}),mk(c3[0],{s:3,r:"12-15",x:"60s",l:"Full ROM"}),mk(a1[0],{s:3,r:"10-12",x:"60s",l:"Core"}),mk(a1[1],{s:3,r:"10-12",x:"60s",l:"Core"})];}
+else if(p===2){legEx=[mk(q1[0],{s:4,r:"8-10",x:"90s",l:"Strength",nt:"Deep squats, controlled"}),mk(q1[1],{s:4,r:"10-12",x:"60s",l:"Volume"}),mk(q2[0],{s:3,r:"12-15",x:"45s",l:"Isolation"}),mk(h1[0],{s:4,r:"10-12",x:"60s",l:"Controlled"}),mk(h1[1],{s:3,r:"12-15",x:"45s",l:"Pump"}),mk(g1[0],{s:4,r:"12-15",x:"45s",l:"Squeeze"}),mk(c3[0],{s:4,r:"15-20",x:"45s",l:"Burn"}),mk(a1[0],{s:3,r:"12-15",x:"45s",l:"Core"}),mk(a1[1],{s:3,r:"12-15",x:"45s",l:"Core"}),mk(a1[2],{s:3,r:"12-15",x:"45s",l:"Core"})];}
+else{legEx=[mk(q1[0],{s:4,r:"15-20",x:"45s",l:"Volume",nt:"Moderate weight, deep, slow"}),mk(q1[1],{s:4,r:"15-20",x:"30s",l:"Pump",nt:"Drop set last 2 sets"}),mk(q2[0],{s:3,r:"20-25",x:"20s",l:"Burnout"}),mk(h1[0],{s:4,r:"12-15",x:"45s",l:"Controlled"}),mk(h1[1],{s:3,r:"20-25",x:"20s",l:"Extreme"}),mk(g1[0],{s:4,r:"15-20",x:"30s",l:"Squeeze Hard"}),mk(c3[0],{s:4,r:"25-30",x:"20s",l:"Max Burn"}),mk(a1[0],{s:4,r:"15-20",x:"30s",l:"Core",nt:"No rest between core exercises"}),mk(a1[1],{s:3,r:"15-20",x:"20s",l:"Core"}),mk(a1[2],{s:3,r:"20-25",x:"20s",l:"Core"}),mk(a1[3],{s:3,r:"25-30",x:"0s",l:"Core Finisher"})];}
+const legs={nm:"LEGS + ABS",sb:p===1?"Heavy Compound Day":p===2?"Volume & Isolation":"Peak Destruction",ic:"🦵",ex:legEx,
+fn:p===1?"":p===2?"Lunges 3×20 steps + Wall sit 3×45s":"100 bodyweight squats + 50 jump lunges + 2 min plank — for time",
+noCardio:"⛔ NO cardio today. No morning run. Legs need every drop of recovery."};
+
+const u1=pk(X.cc,1,r),u2=pk(X.bv,1,r),u3=pk(X.bh,1,r),u4=pk(X.ci,1,r),u5=pk(X.sp,1,r),u6=pk(X.sl,1,r),u7=pk(X.bc,1,r),u8=pk(X.tr,1,r),u9=pk(X.ab,2,r);
+let upEx;
+if(p===1){upEx=[mk(u1[0],{s:4,r:"8-10",x:"90s",l:"Hypertrophy"}),mk(u2[0],{s:4,r:"8-10",x:"90s",l:"Hypertrophy"}),mk(u4[0],{s:3,r:"10-12",x:"75s",l:"Isolation"}),mk(u3[0],{s:3,r:"10-12",x:"75s",l:"Rows"}),mk(u5[0],{s:3,r:"8-10",x:"90s",l:"Heavy OHP"}),mk(u7[0],{s:3,r:"10-12",x:"60s",l:"Curls"}),mk(u8[0],{s:3,r:"10-12",x:"60s",l:"Extensions"}),mk(u9[0],{s:3,r:"10-12",x:"60s",l:"Core"})];}
+else if(p===2){upEx=[mk(u1[0],{s:4,r:"10-12",x:"60s",l:"Volume"}),mk(u2[0],{s:4,r:"10-12",x:"60s",l:"Volume"}),{...mk(u4[0],{s:3,r:"12-15",x:"30s",l:"SS-A1"}),ss:1},{...mk(u3[0],{s:3,r:"12-15",x:"60s",l:"SS-A2"}),ss:1},mk(u5[0],{s:3,r:"10-12",x:"60s",l:"Press"}),mk(u6[0],{s:4,r:"15-20",x:"30s",l:"Pump"}),{...mk(u7[0],{s:3,r:"12-15",x:"30s",l:"SS-B1"}),ss:1},{...mk(u8[0],{s:3,r:"12-15",x:"60s",l:"SS-B2"}),ss:1},mk(u9[0],{s:3,r:"12-15",x:"45s",l:"Core"}),mk(u9[1],{s:3,r:"12-15",x:"45s",l:"Core"})];}
+else{upEx=[mk(u1[0],{s:4,r:"15-20",x:"30s",l:"Pump",nt:"Drop set last set"}),mk(u2[0],{s:4,r:"15-20",x:"30s",l:"Pump"}),{...mk(u4[0],{s:3,r:"20-25",x:"20s",l:"Giant A1",nt:"Giant set: 3 exercises back-to-back"}),ss:1},{...mk(u3[0],{s:3,r:"20-25",x:"20s",l:"Giant A2"}),ss:1},{...mk(u5[0],{s:3,r:"15-20",x:"60s",l:"Giant A3"}),ss:1},mk(u6[0],{s:4,r:"25-30",x:"20s",l:"Max Pump",nt:"Lightest weight, max reps"}),{...mk(u7[0],{s:3,r:"20-25",x:"20s",l:"Giant B1"}),ss:1},{...mk(u8[0],{s:3,r:"20-25",x:"60s",l:"Giant B2"}),ss:1},mk(u9[0],{s:3,r:"15-20",x:"30s",l:"Core"}),mk(u9[1],{s:3,r:"20-25",x:"0s",l:"Core Final"})];}
+const upper={nm:"UPPER HYPERTROPHY",sb:p===1?"Balanced Upper":p===2?"Supersets & Volume":"Giant Sets & Burnouts",ic:"⚡",ex:upEx,
+fn:p===1?"":p===2?"Giant: 10 push-ups+10 curls+10 laterals ×3":"Mechanical drop: incline press → flat press → push-ups to failure × 3 rounds",
+cd:f?"":p===1?"AFTER GYM (pick one): 🚶 20 min incline walk · 🚴 20 min cycling · 🏃 20 min stairmaster":p===2?"AFTER GYM (pick one): ⚡ 20 min HIIT treadmill (30s sprint / 30s walk) · 🏃 25 min stairmaster · 🚴 20 min cycling":"AFTER GYM (pick one): ⚡ 25 min HIIT (20s all-out / 40s rest) · 🏃 25 min stairmaster intervals · 🚴 25 min cycling HIIT",
+am:f?"":"🌅 OPTIONAL AM: Easy 3km jog BEFORE gym (outdoor or treadmill)"};
+
+const rp=getRn(wk);
+const cls=CLS[p];
+const cond={nm:"CARDIO + CORE",sb:cls.active?`Main Run + ${cls.opts[0]} + Core`:"Main Run + Core",ic:"🏃",
+rn:1,rp,cls,po:pk(X.ab,3,r).map(e=>mk(e,{s:3,r:p===1?"10-12":p===2?"15-20":"20-25",x:p===1?"60s":"30s",l:"Core"}))};
+const off={nm:"FULL REST",sb:"Sleep · Recover",ic:"😴",at:["Complete rest","Sleep 7-9 hours","Drink 3.5-4L water","Meal prep","Light stretching"]};
+return{wk,phase:p,days:[push,pull,rest,legs,upper,cond,off]};}
+
+function genMeals(wk){const p=gph(wk),mp=ME.ph[p-1],r=rng(wk*3571);
+const bPool=p===1?ML.b1:p===2?ML.b2:ML.b3;
+const lPool=p===1?ML.l1:p===2?ML.l2:ML.l3;
+const dPool=p===1?ML.d1:p===2?ML.d2:ML.d3;
+if(S.fasting)return{...mp,fast:1,meals:[{t:"SUHOOR",nm:"Pre-Dawn",o:ML.su,id:'su'},{t:"IFTAR",nm:"Break Fast",o:ML.ift,id:'if'},{t:"EVENING",nm:"Night Meal",o:ML.is,id:'is'}]};
+return{...mp,fast:0,meals:[
+{t:"7:00 AM",nm:"Breakfast",o:bPool,id:'b'},
+{t:"10:00 AM",nm:"Snack",o:ML.s1,id:'s'},
+{t:"1:00 PM",nm:"Lunch",o:lPool,id:'l'},
+{t:"3:30 PM",nm:"Pre-WO",o:ML.pw,id:'pw'},
+{t:"6:30 PM",nm:"Dinner",o:dPool,id:'d'},
+{t:"9:00 PM",nm:"Evening",o:ML.e,id:'e'}]};}
+
+// ═══ RENDER ═══
+function render(){
+const W=genWeek(S.week),p=W.phase,c=PC[p],mp=genMeals(S.week),d=W.days[S.day]||W.days[0],pn=ME.ph[p-1];
+document.documentElement.style.setProperty('--p',c.p);document.documentElement.style.setProperty('--bg',c.bg);document.documentElement.style.setProperty('--c',c.c);save();
+let h=`<div class="hdr"><div class="htop"><div class="hn"><b>X11</b> · ${ME.n}</div>
+<div class="ft${S.fasting?' on':''}" onclick="S.fasting=!S.fasting;render()">☪ ${S.fasting?'FASTING':'Fast'}</div></div>
+<div class="pt" style="background:${c.p}15;color:${c.p}">PHASE ${p} — ${pn.n}</div>
+<div class="wti">Week ${S.week} <span>/ 24</span></div>
+<div class="ws2">Wk ${gpw(S.week)}/8 · ${mp.cal} cal · ${pn.l}${S.fasting?' · ☪':''}</div>
+<div class="pb"><div class="pf" style="width:${(S.week/24)*100}%;background:linear-gradient(90deg,${c.p},${c.p}88)"></div></div></div>
+<div class="wn"><button class="wb" style="background:${c.p}10;border-color:${c.p}30;color:${c.p}" ${S.week<=1?'disabled':''} onclick="S.week--;S.exp=null;render()">◀</button>
+<span style="color:#444;font-size:12px">Wk ${S.week}</span>
+<button class="wb" style="background:${c.p}10;border-color:${c.p}30;color:${c.p}" ${S.week>=24?'disabled':''} onclick="S.week++;S.exp=null;render()">▶</button></div>
+<div class="ds">${DAYS.map((dy,i)=>`<button class="db${S.day===i?' a':''}" style="${S.day===i?`background:${c.p};color:#000`:''}" onclick="S.day=${i};S.exp=null;render()"><span class="i">${W.days[i]?.ic||''}</span>${dy.slice(0,3)}</button>`).join('')}</div>
+<div class="cnt" style="background:${c.bg}">
+${S.tab==='workout'?`<div class="dh"><h2>${d.ic} ${d.nm}</h2><p>${d.sb}</p></div>`:''}
+${S.fasting&&S.tab==='workout'?'<div class="fb">☪ Fasting — Reduced volume</div>':''}
+${S.tab==='workout'&&d.ex&&d.ex.length>0?`<div class="diff" style="background:${p===1?'rgba(0,255,135,.08)':p===2?'rgba(255,107,53,.08)':'rgba(255,45,85,.08)'};color:${c.p}">${p===1?'💪 STRENGTH — Heavy, low reps, long rest':p===2?'🔥 SHRED — Supersets, volume, shorter rest':'⚡ PEAK — Giant sets, drop sets, max intensity'}</div>`:''}
+${S.tab==='workout'?rW(d,p,c):S.tab==='meals'?rM(mp,c):S.tab==='track'?rP(c):S.tab==='shop'?rSh(c):rI(W,c,mp)}</div>
+<div class="tbr">${[{id:'workout',i:'🏋️',l:'Train'},{id:'meals',i:'🍽️',l:'Fuel'},{id:'track',i:'📈',l:'Track'},{id:'shop',i:'🛒',l:'Shop'},{id:'info',i:'📊',l:'Info'}].map(t=>`<button class="tab${S.tab===t.id?' a':''}" style="${S.tab===t.id?`color:${c.p}`:''}" onclick="S.tab='${t.id}';render()"><span class="i">${t.i}</span>${t.l}</button>`).join('')}</div>`;
+document.getElementById('a').innerHTML=h;}
+
+function exC(e,k,op,c){
+return`<div class="ec${op?' op':''}" style="${op?`background:${c.c}`:''}" onclick="S.exp=S.exp==='${k}'?null:'${k}';render()">
+<div class="etp"><div style="flex:1"><p class="en">${e.n}${e.ss?'<span class="ssb">SS</span>':''}</p><p class="em">${e.m}</p></div><span class="ea">▾</span></div>
+<div class="et"><span class="tg tp">${e.s} sets</span><span class="tg ty">${e.r} reps</span><span class="tg tb2">${e.x} rest</span>${e.l?`<span class="tg" style="background:rgba(255,255,255,.04);color:#666">${e.l}</span>`:''}</div>
+<div class="ed">${e.nt?`<p class="eno">💡 ${e.nt}</p>`:''}
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<a href="https://www.youtube.com/watch?v=${e.y}" target="_blank" class="vd" style="background:#CC0000" onclick="event.stopPropagation()">🎬 Full Demo</a>
+<a href="https://www.youtube.com/results?search_query=${encodeURIComponent(e.n+' form tutorial #shorts')}" target="_blank" class="vd" style="background:#222;border:1px solid #333" onclick="event.stopPropagation()">⚡ Short Clip</a>
+</div></div></div>`;}
+
+function rW(d,p,c){
+// FULL REST (Sunday)
+if(d.at&&!d.at_type)return`<p class="st" style="color:${c.p};margin-top:0">😴 FULL REST</p>${d.at.map(a=>`<div class="ac">${a}</div>`).join('')}<div class="nb" style="border-color:${c.p};background:${c.p}08">💤 Muscles grow during rest. Sleep 7-9h. Hydrate. Prep meals.</div>`;
+
+// RECOVERY + RUN (Wednesday)
+if(d.at_type==='recovery'){const rp=d.rp;
+return`<div class="rc"><p style="color:#09F;font-size:11px;font-weight:700;letter-spacing:1px">🏃 TODAY'S RUN</p>
+<h4 style="font-size:16px;font-weight:800;margin-top:3px">Easy 3-4km · Conversational pace</h4>
+<p style="font-size:13px;color:#999;margin-top:4px">Part of: ${rp.t} · Weekly target: ${rp.tg}</p>
+<div class="rs"><div><p style="font-size:16px;font-weight:800;color:#09F">3-4km</p><p style="font-size:9px;color:#666;margin-top:2px">Distance</p></div><div><p style="font-size:16px;font-weight:800;color:#09F">20-25m</p><p style="font-size:9px;color:#666;margin-top:2px">Duration</p></div><div><p style="font-size:16px;font-weight:800;color:#09F">Easy</p><p style="font-size:9px;color:#666;margin-top:2px">Effort</p></div></div>
+<p style="font-size:12px;color:#666;margin-top:8px">Pick: 🌳 Outdoor jog · 🏃 Treadmill (1%, 7-8km/h) · 🚴 30min easy cycling if legs are sore</p></div>
+${d.runNote?`<div class="nb" style="border-color:#FFD700;background:rgba(255,215,0,.04)">${d.runNote}</div>`:''}
+<p class="st" style="color:${c.p}">📋 ALSO DO</p>
+${d.at.map(a=>`<div class="ac">${a}</div>`).join('')}
+<div class="nb" style="border-color:${c.p};background:${c.p}06">
+<b>📅 This week's run plan (${rp.t}):</b><br>${rp.p}<br><br>
+<b>When:</b> Wed = easy run (today) · Sat = main long run · Tue/Fri AM = optional 3km jog<br>💡 ${rp.nt}
+</div>`;}
+
+// CARDIO + CORE DAY (Saturday) — Main run + class option + core
+if(d.rn){const rp=d.rp,cls=d.cls;
+let html=`<div class="rc"><p style="color:#09F;font-size:11px;font-weight:700;letter-spacing:1px">🏃 MAIN RUN — ${rp.t.toUpperCase()}</p>
+<h4 style="font-size:16px;font-weight:800;margin-top:3px">Your longest/hardest run this week</h4>
+<p style="font-size:13px;color:#999;margin-top:4px">${rp.p}</p>
+<div class="rs"><div><p style="font-size:16px;font-weight:800;color:#09F">${rp.tg}</p><p style="font-size:9px;color:#666;margin-top:2px">Target</p></div><div><p style="font-size:16px;font-weight:800;color:#09F">${S.week<=8?'6:00+':S.week<=16?'5:30':'5:00'}</p><p style="font-size:9px;color:#666;margin-top:2px">min/km</p></div></div>
+<p style="font-size:12px;color:#666;margin-top:8px">Pick: 🌳 Outdoor (best) · 🏃 Treadmill (1-2%) · 🏟️ Track</p>
+<p style="font-size:12px;color:#666;margin-top:6px;font-style:italic">💡 ${rp.nt}</p></div>`;
+if(S.fasting)html+=`<div class="nb" style="border-color:#FFD700;background:rgba(255,215,0,.04)">☪ Run AFTER iftar (1-2hr gap). Easy pace, shorter distance.</div>`;
+if(cls&&cls.active){html+=`<div class="cls-card"><p style="color:#FF6B35;font-size:11px;font-weight:700;letter-spacing:1px">🏟️ OR: CLASS (pick ${cls.perWeek}/week)</p><h4 style="font-size:16px;font-weight:800;margin-top:3px">${cls.opts.join(' or ')}</h4><p style="font-size:12px;color:#999;margin-top:6px;line-height:1.5">${cls.note}</p>
+<p style="font-size:11px;color:#FF6B35;margin-top:6px;font-weight:600">Class replaces the run for that day. Do core work after.</p></div>`;}
+html+=`<p class="st" style="color:${c.p}">💪 CORE WORK (after run or class)</p>`;
+html+=d.po.map((e,i)=>exC(e,'r-'+i,S.exp==='r-'+i,c)).join('');
+return html;}
+
+// REGULAR GYM DAY (Mon, Tue, Thu, Fri)
+let html='';
+if(d.am)html+=`<div class="ac" style="border-left:3px solid #09F;margin-bottom:12px"><p style="color:#09F;font-size:12px;font-weight:600">${d.am}</p></div>`;
+html+=d.ex.map((e,i)=>exC(e,S.day+'-'+i,S.exp===S.day+'-'+i,c)).join('');
+if(d.fn)html+=`<div style="background:${c.p}08;border:1px solid ${c.p}20;border-radius:13px;padding:13px;margin-top:14px"><p style="font-size:11px;font-weight:700;color:${c.p};letter-spacing:1px">🔥 FINISHER</p><p style="margin-top:5px;font-size:13px">${d.fn}</p></div>`;
+if(d.noCardio)html+=`<div class="ac" style="border-left:3px solid #FF4757;margin-top:12px"><p style="color:#FF4757;font-size:12px;font-weight:700">${d.noCardio}</p></div>`;
+if(d.cd)html+=`<div class="ac" style="margin-top:12px;border-left:3px solid #09F"><p style="color:#09F;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:6px">🏃 POST-WORKOUT CARDIO</p><p style="font-size:12px;line-height:1.8">${d.cd}</p></div>`;
+return html;}
+
+function rM(mp,c){
+// Unified daily timeline: food + supplements at each time
+const p=gph(S.week);
+const isFast=mp.fast;
+const isGym=S.day<2||S.day===3||S.day===4; // push,pull,legs,upper = gym days
+
+let timeline;
+const d3Day=S.week%2===1;
+const d3DayP2=S.week%3===0;
+const showD3=p===1?d3Day:d3DayP2;
+const d3Label=showD3?"💊 Vitamin D3 10,000 IU ✓ (today is your D3 day)":"";
+if(isFast){
+timeline=[
+{t:"SUHOOR (Pre-Dawn)",type:"meal+supp",meal:mp.meals[0],
+supps:["💊 Multivitamin (right after eating)",d3Label,"💊 Fish Oil 2-3g","💊 Creatine 5g"].concat(p===1?["🔥 CLA Keto Cut 3 caps"]:[]).filter(Boolean),
+note:"All supps with food. Eat fat (eggs/PB) for D3+fish oil absorption. Drink 1-1.5L water slowly."},
+{t:"IFTAR (Sunset)",type:"meal+supp",meal:mp.meals[1],
+supps:["💊 Whey Protein shake (within 30 min)"],
+note:"Break fast: 3 dates + water. Wait 15 min. Then main meal + shake."},
+{t:"EVENING (9:30 PM)",type:"meal+supp",meal:mp.meals[2],
+supps:["💊 Magnesium Glycinate 400mg"],
+note:"Magnesium 30 min before sleep. Yogurt/cottage cheese feeds muscles overnight."}
+];
+} else {
+timeline=[
+{t:"7:00 AM — After Breakfast",type:"meal+supp",meal:mp.meals[0],
+supps:["💊 Multivitamin (immediately after eating)"],
+note:"Eat eggs, oats+PB, or any fat-containing breakfast. Multi has zinc 15mg + Vit C 500mg + B vitamins — no separate zinc or C needed."},
+{t:"10:00 AM — Snack",type:"meal",meal:mp.meals[1]},
+{t:"1:00 PM — After Lunch",type:"meal+supp",meal:mp.meals[2],
+supps:["💊 Fish Oil 2-3g",d3Label].concat(p===1?["🔥 CLA Keto Cut 3 caps (Phase 1 only)"]:[]).filter(Boolean),
+note:"Fish Oil + D3 together after your fattiest meal = maximum absorption."+(p===1?" CLA stops after week 8.":"")+(showD3?"":" D3: skip today, next dose in "+(p===1?"2":"3")+" days.")},
+{t:"3:30 PM — Pre-Workout",type:"meal+supp",meal:mp.meals[3],
+supps:isGym?["🔥 Super Burner Extra 2 caps (~115mg caffeine)"]:["No supps"],
+note:isGym?"30 min before gym. Light carbs (banana/dates) speed caffeine.":"Rest day — no pre-workout."},
+{t:"6:30 PM — Post-Workout / Dinner",type:"meal+supp",meal:mp.meals[4],
+supps:["💊 Creatine 5g"].concat(isGym?["💊 Whey Protein (if short on protein)"]:[]),
+note:"Creatine with carbs (rice/potato) for best absorption."},
+{t:"9:30 PM — Before Sleep",type:"meal+supp",meal:mp.meals[5],
+supps:["💊 Magnesium Glycinate 400mg"],
+note:"Magnesium ONLY at bedtime — no other minerals competing. Yogurt/cottage cheese = slow overnight protein."}
+];
+}
+
+return`${isFast?'<div class="fb">☪ Fasting Day — Modified Timing</div>':''}
+<div class="mg"><div class="mbox"><p class="mv2" style="color:${c.p}">${mp.cal}</p><p class="ml3">Cal</p></div><div class="mbox"><p class="mv2" style="color:#FF4757">${mp.p}g</p><p class="ml3">Protein</p></div><div class="mbox"><p class="mv2" style="color:#FFD700">${mp.c}g</p><p class="ml3">Carbs</p></div><div class="mbox"><p class="mv2" style="color:#09F">${mp.f}g</p><p class="ml3">Fat</p></div></div>
+${isFast?'<div class="nb" style="border-color:#FFD700;background:rgba(255,215,0,.04);margin-top:10px">⚡ ~1600-1800 cal. Lower training intensity. Front-load hydration at suhoor.</div>':''}
+${!isFast?`<div style="display:flex;gap:6px;margin-top:10px;margin-bottom:4px"><span class="tg ${isGym?'tp':'to'}" style="font-size:10px">${isGym?'🏋️ GYM DAY':'🛋️ REST DAY'} — supps adjusted</span></div>`:''}
+<p class="st" style="color:${c.p};margin-top:10px">📋 DAILY TIMELINE</p>
+<p style="font-size:11px;color:#444;margin:-4px 0 10px">Food + supplements at each time · Tap meals for recipes</p>
+${timeline.map((slot,si)=>{
+const m=slot.meal;
+const supps=slot.supps||[];
+const mid=m?m.id:'x';
+const idx=(S.mi[mid]||0)%((m&&m.o?m.o.length:1)||1);
+const o=m&&m.o?m.o[idx]:null;
+const total=m&&m.o?m.o.length:0;
+const mk2='m-'+mid;
+const isOpen=S.exp===mk2;
+return`<div class="mc" style="border-left:3px solid ${c.p}30">
+<p style="color:${c.p};font-size:11px;font-weight:700;letter-spacing:1px">${slot.t}</p>
+
+${o?`<div style="display:flex;justify-content:space-between;align-items:center;margin:6px 0 4px">
+<p style="font-size:14px;font-weight:700;flex:1">${m.nm}</p>
+${total>1?`<button onclick="event.stopPropagation();S.mi['${mid}']=(S.mi['${mid}']||0)+1;render()" style="background:${c.p}15;border:1px solid ${c.p}30;color:${c.p};padding:5px 12px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">🔀 ${idx+1}/${total}</button>`:''}
+</div>
+<div style="border:1px solid #1a1a1a;border-radius:10px;padding:10px;cursor:pointer;${isOpen?`border-color:${c.p}30;background:${c.p}04`:''}" onclick="S.exp=S.exp==='${mk2}'?null:'${mk2}';render()">
+<p style="font-size:13px;line-height:1.5">${o.f}</p>
+<div class="mm" style="margin-top:6px"><span class="mp" style="color:#666;background:#0f0f0f">${o.k} cal</span><span class="mp" style="color:#FF4757;background:rgba(255,71,87,.08)">P:${o.p}g</span><span class="mp" style="color:#FFD700;background:rgba(255,215,0,.08)">C:${o.c}g</span><span class="mp" style="color:#09F;background:rgba(0,153,255,.08)">F:${o.a}g</span></div>
+${isOpen&&o.r?`<div class="recipe"><b>📝 How to make:</b><br>${o.r}</div>`:''}
+${isOpen&&!o.r?`<div class="recipe" style="color:#555">Tap 🔀 to see other options</div>`:''}
+</div>`:m?`<p style="font-size:14px;font-weight:700;margin:6px 0">${m.nm}</p>`:''}
+
+${supps.length?`<div style="margin-top:8px;padding:8px 10px;background:rgba(138,43,226,.04);border:1px solid rgba(138,43,226,.12);border-radius:10px">
+${supps.map(s=>`<p style="font-size:12px;color:#b388ff;line-height:1.8">${s}</p>`).join('')}
+</div>`:''}
+${slot.note?`<p style="font-size:11px;color:#555;margin-top:6px;font-style:italic">💡 ${slot.note}</p>`:''}
+</div>`;}).join('')}
+
+<div style="background:rgba(0,102,255,.05);border:1px solid rgba(0,102,255,.12);border-radius:13px;padding:13px;margin-top:10px;text-align:center">
+<div style="font-size:22px">💧</div>
+<div style="color:#09F;font-size:15px;font-weight:700;margin-top:3px">${isFast?'SUHOOR: 1.5L+ WATER':'3.5L+ WATER DAILY'}</div>
+<p style="font-size:11px;color:#666;margin-top:3px">${isFast?'Front-load all hydration before dawn':'Extra in Abu Dhabi heat + training days'}</p>
+</div>
+
+<p class="st" style="color:${c.p};margin-top:20px">🔄 SUPPLEMENT PROTOCOL</p>
+<div class="ac" style="line-height:1.7;font-size:12px;color:#999">
+<span style="color:#0F8;font-weight:700">AFTER BREAKFAST:</span> Multivitamin only (covers zinc 15mg + Vit C 500mg + B vitamins)<br><br>
+<span style="color:#0F8;font-weight:700">AFTER LUNCH:</span> Fish Oil 2-3g + Vitamin D3 10,000 IU (${p===1?'every other day':'every 3rd day'}) ${p===1?'+ CLA Keto Cut (Phase 1 only)':''}<br><br>
+<span style="color:#FFD700;font-weight:700">PRE-GYM:</span> Super Burner 2 caps (gym days only). Cycle: 6 wk ON → 1 wk OFF.<br><br>
+<span style="color:#0F8;font-weight:700">POST-GYM:</span> Creatine 5g + Whey (if needed) — daily forever<br><br>
+<span style="color:#0F8;font-weight:700">BEDTIME:</span> Magnesium 400mg ONLY — no other minerals, clean absorption<br><br>
+<span style="color:#0F8;font-weight:700">DROPPED:</span> Separate zinc (multi has 15mg), separate Vit C (multi has 500mg), casein (yogurt replaces it)${p>=2?', CLA Keto Cut (finished in Phase 1)':''}
+</div>
+
+${!isFast&&!isGym?`<div class="nb" style="border-color:var(--p);background:rgba(0,255,135,.04);margin-top:10px">📋 <b>Rest day:</b> No Super Burner. Multi after breakfast, Fish Oil + D3 after lunch, Creatine with dinner, Magnesium at bedtime. Simple.</div>`:''}
+`;}
+
+
+function rP(c){return`<p class="st" style="color:${c.p};margin-top:0">📈 LOG</p><p style="font-size:11px;color:#444;margin-bottom:10px">Weekly: same day, morning, fasted</p>
+<div class="lr"><input class="li" id="lw" type="number" inputmode="decimal" placeholder="Weight (kg)"><input class="li" id="lb" type="number" inputmode="decimal" placeholder="BF %">
+<button style="padding:10px 16px;border-radius:10px;border:none;font-size:13px;font-weight:700;background:${c.p};color:#000;cursor:pointer" onclick="addLog()">Log</button></div>
+${LOG.length?`<p class="st" style="color:${c.p}">HISTORY</p>${LOG.slice().reverse().map(l=>`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #0a0a0a;font-size:13px"><span style="color:#555">Wk ${l.wk}</span><span><b>${l.w}kg</b></span><span style="color:#888">${l.bf?l.bf+'%':''}</span></div>`).join('')}`:''}
+<p class="st" style="color:${c.p};margin-top:20px">🎯 MILESTONES</p><p style="font-size:11px;color:#444;margin-bottom:10px">Hit the target → earn the reward</p>
+${MST.map(m=>{const dn=S.week>m.wk,cur=S.week>=m.wk-1&&S.week<=m.wk;
+return`<div class="ms2${dn?' d':''}${cur?' c':''}"><div class="msl2"></div><div class="msc2">
+<p style="font-size:11px;color:${cur?c.p:'#555'};font-weight:600">${cur?'→ ':dn?'✓ ':''}WEEK ${m.wk}</p>
+<p style="font-size:13px;font-weight:700;margin-top:2px">${m.w}kg · ${m.bf}%</p>
+<p style="font-size:11px;color:#666;margin-top:2px">${m.nt}</p>
+${m.ch?`<div class="cheat"><p style="color:#FFD700;font-size:11px;font-weight:700">🎉 CHEAT MEAL EARNED</p><p style="font-size:13px;font-weight:700;margin-top:2px">${m.cr}</p><p style="font-size:11px;color:#888;margin-top:3px">Rules: normal meals all day, cheat = dinner only. Train that day. No sugary drinks. Don't weigh next morning — water retention spikes 1-2kg (normal).</p></div>`:''}</div></div>`}).join('')}`;}
+
+function rSh(c){
+const p=gph(S.week);
+const curPhase=p===1?SHOP.ph1:p===2?SHOP.ph2:SHOP.ph3;
+return`<p class="st" style="color:${c.p};margin-top:0">🛒 YOUR SHOPPING LIST</p>
+<p style="font-size:11px;color:#444;margin-bottom:10px">Phase ${p} (Week ${S.week}) — buy weekly unless noted</p>
+
+<div class="shop-cat" style="color:${c.p}">${SHOP.always.n}</div>
+${SHOP.always.items.map(([n,q])=>`<div class="shop-item"><span>${n}</span><span class="shop-qty">${q}</span></div>`).join('')}
+
+<div class="shop-cat" style="color:${PC[p].p};margin-top:16px">${curPhase.n}</div>
+<p style="font-size:11px;color:#666;margin-bottom:6px">${curPhase.note}</p>
+${curPhase.items.map(([n,q])=>`<div class="shop-item"><span>${n}</span><span class="shop-qty">${q}</span></div>`).join('')}
+
+<div class="shop-cat" style="color:#b388ff;margin-top:16px">${SHOP.supps.n}</div>
+${SHOP.supps.items.map(([n,q])=>`<div class="shop-item"><span>${n}</span><span class="shop-qty">${q}</span></div>`).join('')}
+${SHOP.supps.note?`<p style="font-size:11px;color:#b388ff;margin-top:6px;font-style:italic">📌 ${SHOP.supps.note}</p>`:''}
+
+${p<3?`<div class="nb" style="border-color:${c.p};background:${c.p}06;margin-top:16px">
+📅 <b>Phase ${p+1} (Week ${p*8+1}):</b> You'll add ${p===1?'turkey, shrimp, fish, feta, pasta — more lean protein variety':'salmon, steak (1x/week each), electrolytes — peak performance fuel'}. Shopping list auto-updates when you advance.
+</div>`:''}
+
+<p class="st" style="color:#FF4757;margin-top:24px">🚫 NEVER BUY</p>
+${AVOID.map(a=>`<div class="avoid-item"><p class="anm">${a.n}</p><p class="why">${a.w}</p></div>`).join('')}
+<div class="nb" style="border-color:${c.p};background:${c.p}06;margin-top:16px">💡 Shop with a list, never hungry. Stick to perimeter of store. >5 ingredients on label? Skip it.</div>`;}
+
+function rI(W,c,mp){return`<p class="st" style="color:${c.p};margin-top:0">📊 STATS</p>
+<div class="ig"><div class="ic"><p class="iv" style="color:${c.p}">78<span>kg</span></p><p class="il">Start</p></div><div class="ic"><p class="iv" style="color:${c.p}">26<span>%</span></p><p class="il">Start BF</p></div><div class="ic"><p class="iv" style="color:${c.p}">67<span>kg</span></p><p class="il">Target</p></div><div class="ic"><p class="iv" style="color:${c.p}">10<span>%</span></p><p class="il">Target BF</p></div></div>
+<p class="st" style="color:${c.p};margin-top:20px">📅 PHASES</p>
+${ME.ph.map((p2,i)=>{const a=i+1===W.phase,cm=ME.ph.slice(0,i).reduce((s,x)=>s+x.wk,0);return`<div style="background:#0a0a0a;border:1px solid #151515;border-radius:13px;padding:13px;margin-bottom:7px;opacity:${a?1:.5};border-left:3px solid ${PC[i+1].p}"><div style="display:flex;justify-content:space-between"><p style="font-size:14px;font-weight:700;color:${PC[i+1].p}">PHASE ${i+1}: ${p2.n}</p>${a?`<span class="tg" style="background:${PC[i+1].p}20;color:${PC[i+1].p}">NOW</span>`:''}</div><p style="font-size:11px;color:#555;margin-top:2px">Wk ${cm+1}–${cm+p2.wk} · ${p2.cal} cal</p><p style="font-size:12px;color:#888;margin-top:4px">${p2.l} · P:${p2.p}g C:${p2.c}g F:${p2.f}g</p></div>`}).join('')}
+<p class="st" style="color:${c.p};margin-top:20px">🏟️ CLASSES</p>
+${[1,2,3].map(i=>{const cl=CLS[i];return`<div class="ac" style="${i===W.phase?`border-color:${c.p}30;background:${c.p}05`:'opacity:.5'}"><p style="font-size:13px;font-weight:700;color:${PC[i].p}">Phase ${i}${i===W.phase?' (NOW)':''}</p><p style="font-size:12px;color:#888;margin-top:4px">${cl.note}</p></div>`}).join('')}
+<p class="st" style="color:${c.p};margin-top:20px">🏋️ SPLIT</p>
+${DAYS.map((d,i)=>`<div style="display:flex;gap:10px;padding:7px 0;border-bottom:1px solid #0a0a0a"><span style="color:${c.p};font-size:12px;font-weight:700;min-width:72px">${d}</span><span style="font-size:12px;${W.days[i]?.ex?.length||W.days[i]?.rn?'color:#fff':'color:#333'}">${W.days[i]?.ic||''} ${W.days[i]?.nm||''}</span></div>`).join('')}
+<p class="st" style="color:${c.p};margin-top:20px">⚡ RULES</p>
+${["Progressive overload when you hit all reps","Workouts randomize weekly — no adaptation","Track weights, reps & how you felt","Sleep 7-9h — growth happens here","Weigh in weekly: same day, fasted","Progress photos every 2 weeks","Phase 3 refeeds: +400 carbs every 10-14 days","Miss a day? Continue — never double up","Run schedule: Wed + Sat + 1-2 optional mornings","Classes: Phase 2+ only, on conditioning day","Abu Dhabi: extra water + electrolytes always","Super Burner = pre-workout (gym days). CLA = Phase 1 breakfast only"].map((r,i)=>`<div style="padding:7px 0;border-bottom:1px solid #0a0a0a;display:flex;gap:7px"><span style="color:${c.p};font-weight:700;min-width:18px">${i+1}.</span><span style="font-size:12px;line-height:1.5">${r}</span></div>`).join('')}
+<p class="st" style="color:${c.p};margin-top:28px">🏆 AFTER WEEK 24 — MAINTENANCE</p>
+<div class="maint"><h4>Calories: ${MAINT.cal}/day</h4><p>Back to maintenance. No deficit. P:${MAINT.p}g C:${MAINT.c}g F:${MAINT.f}g</p></div>
+<div class="maint"><h4>${MAINT.train}</h4><p>Drop to 4 days. Volume -20%. Keep intensity high.</p></div>
+<div class="maint"><h4>${MAINT.cardio}</h4><p>Run for enjoyment. Maintain 10K ability. Daily walks.</p></div>
+<div class="maint"><h4>Life Rules</h4><p>${MAINT.rules.map((r,i)=>`${i+1}. ${r}`).join('<br>')}</p></div>
+<div class="nb" style="border-color:${c.p};background:${c.p}06;margin-top:16px">🎯 <b>78kg@26% → 67kg@10%</b> in 24 weeks. Visible 6-pack, vascular arms, shoulder caps, a body that turns heads. Every rep counts, Hashem.</div>
+<button class="rb" onclick="if(confirm('Reset all progress?')){LOG=[];S.week=1;save();render()}">🔄 Reset</button>`;}
+
+function addLog(){const w=parseFloat(document.getElementById('lw')?.value),b=parseFloat(document.getElementById('lb')?.value);if(!w)return;LOG.push({wk:S.week,w,bf:b||null});save();render();}
+render();
+</script>
+</body>
+</html>
